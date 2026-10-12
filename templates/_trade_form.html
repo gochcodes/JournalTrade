@@ -1,0 +1,112 @@
+{# Wspólny formularz trade'a (dodawanie i edycja). Zmienna `t` = trade lub None #}
+<form method="POST" enctype="multipart/form-data" autocomplete="off">
+    <div class="form-section-title">Podstawowe</div>
+    <div class="form-row">
+        <div class="form-group">
+            <label for="trade_date">📅 Data</label>
+            <input type="date" id="trade_date" name="trade_date" value="{{ t['trade_date'] if t else selected_date }}" required>
+        </div>
+        <div class="form-group">
+            <label for="godzina_wejscia">🕐 Godzina wejścia</label>
+            <input type="time" id="godzina_wejscia" name="godzina_wejscia" step="1" value="{{ t['godzina_wejscia'] if t and t['godzina_wejscia'] else '' }}">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label for="instrument">📈 Instrument</label>
+            <input type="text" id="instrument" name="instrument" list="instr-list" required
+                   value="{{ t['instrument'] if t and t['instrument'] else '' }}" placeholder="np. EURUSD, BTCUSDT, US500">
+        </div>
+        <div class="form-group">
+            <label>↕️ Kierunek</label>
+            {% set dir = t['kierunek'] if t else 'LONG' %}
+            <div class="direction-toggle">
+                <input type="radio" name="kierunek" id="dir-long" value="LONG" {{ 'checked' if dir == 'LONG' }}><label for="dir-long">▲ LONG</label>
+                <input type="radio" name="kierunek" id="dir-short" value="SHORT" {{ 'checked' if dir == 'SHORT' }}><label for="dir-short">▼ SHORT</label>
+            </div>
+            <input type="hidden" id="kierunek" value="{{ dir }}">
+        </div>
+    </div>
+
+    <div class="form-section-title">Ceny i wynik</div>
+    <div class="form-row">
+        <div class="form-group">
+            <label for="entry_price">🟢 Entry Price</label>
+            <input type="number" id="entry_price" name="entry_price" step="any" placeholder="Cena wejścia"
+                   value="{{ t['entry_price'] if t and t['entry_price'] is not none else '' }}">
+        </div>
+        <div class="form-group">
+            <label for="exit_price">🔴 Exit Price</label>
+            <input type="number" id="exit_price" name="exit_price" step="any" placeholder="Cena wyjścia"
+                   value="{{ t['exit_price'] if t and t['exit_price'] is not none else '' }}">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label for="wielkosc_pozycji">📐 Wielkość pozycji</label>
+            <input type="number" id="wielkosc_pozycji" name="wielkosc_pozycji" step="any" placeholder="np. 0.10"
+                   value="{{ t['wielkosc_pozycji'] if t and t['wielkosc_pozycji'] is not none else '' }}">
+        </div>
+        <div class="form-group">
+            <label for="pl_multiplier">✖️ Mnożnik kontraktu</label>
+            <input type="number" id="pl_multiplier" step="any" value="1">
+            <div class="form-hint">Do auto-obliczenia P/L (Forex 1 lot = 100000)</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="profit_loss">💰 Zysk / Strata</label>
+        <div class="input-with-btn">
+            <input type="number" id="profit_loss" name="profit_loss" step="any" required
+                   placeholder="Dodatnia = zysk, ujemna = strata"
+                   value="{{ t['profit_loss'] if t and t['profit_loss'] is not none else '' }}">
+            <button type="button" class="btn btn-secondary" id="calc-pl-btn" title="Oblicz z cen">🧮 Oblicz</button>
+        </div>
+    </div>
+
+    <div class="form-section-title">Analiza</div>
+    <div class="form-group tags-field">
+        <label>🏷️ Tagi / strategia</label>
+        <div class="tags-input-wrapper" data-all='{{ all_tags | tojson }}'>
+            <input type="text" placeholder="Wpisz i naciśnij Enter (np. breakout, scalp)">
+        </div>
+        <div class="tag-suggestions"></div>
+        <input type="hidden" id="tagi" name="tagi" value="{{ t['tagi'] if t and t['tagi'] else '' }}">
+    </div>
+    <div class="form-group">
+        <label for="notatki">📝 Notatki</label>
+        <textarea id="notatki" name="notatki" placeholder="Powód wejścia, emocje, co poszło dobrze / źle...">{{ t['notatki'] if t and t['notatki'] else '' }}</textarea>
+    </div>
+    <div class="form-group">
+        <label>📸 Screenshot</label>
+        {% if t and t['screenshot'] %}
+        <div style="margin-bottom:12px;">
+            <img src="{{ url_for('uploaded_file', filename=t['screenshot']) }}" alt="Aktualny screenshot"
+                 style="max-width:100%;max-height:200px;border-radius:8px;border:1px solid var(--border-color);cursor:pointer;"
+                 onclick="openImageModal(this.src)">
+            <input type="hidden" name="existing_screenshot" value="{{ t['screenshot'] }}">
+            <div class="form-hint">Wybierz nowy plik, aby zastąpić obecny.</div>
+        </div>
+        {% endif %}
+        <div class="file-upload">
+            <input type="file" name="screenshot" accept="image/*" onchange="previewFile(this)">
+            <div class="upload-icon">📷</div>
+            <div class="upload-text">Kliknij, przeciągnij plik lub wklej ze schowka <span class="kbd">Ctrl+V</span></div>
+        </div>
+        <div id="file-preview" class="file-preview"></div>
+    </div>
+
+    <div class="form-actions">
+        <a href="{{ cancel_url }}" class="btn btn-secondary">Anuluj</a>
+        <button type="submit" class="btn btn-success">💾 {{ 'Zapisz zmiany' if t else 'Zapisz trade' }}</button>
+    </div>
+</form>
+<datalist id="instr-list"></datalist>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('input[name="kierunek"]').forEach(r =>
+        r.addEventListener('change', () => document.getElementById('kierunek').value = r.value));
+    fetch('/api/trades?per_page=1').then(r => r.json()).then(d => {
+        document.getElementById('instr-list').innerHTML = d.instruments.map(i => `<option value="${JT.esc(i)}">`).join('');
+    }).catch(() => {});
+});
+</script>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Journal Trade{% endblock %} · Journal Trade</title>
+    <link rel="icon" href="{{ url_for('static', filename='logo.jpg') }}" type="image/jpeg">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+<div class="app-layout">
+    <!-- ============ MENU BOCZNE ============ -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="{{ url_for('static', filename='logo.jpg') }}" alt="Logo">
+            <h1>Journal Trade</h1>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('index') }}" class="nav-item {{ 'active' if page == 'dashboard' }}" title="Dashboard">
+                <span class="nav-icon">🏠</span><span class="nav-label">Dashboard</span>
+            </a>
+            <a href="{{ url_for('kalendarz') }}" class="nav-item {{ 'active' if page == 'kalendarz' }}" title="Kalendarz">
+                <span class="nav-icon">📅</span><span class="nav-label">Kalendarz</span>
+            </a>
+            <a href="{{ url_for('statystyki') }}" class="nav-item {{ 'active' if page == 'statystyki' }}" title="Statystyki">
+                <span class="nav-icon">📊</span><span class="nav-label">Statystyki</span>
+            </a>
+            <a href="{{ url_for('historia') }}" class="nav-item {{ 'active' if page == 'historia' }}" title="Historia tradów">
+                <span class="nav-icon">📜</span><span class="nav-label">Historia tradów</span>
+            </a>
+
+            <div class="nav-divider"></div>
+
+            <a href="{{ url_for('add_trade') }}" class="nav-item {{ 'active' if page == 'dodaj' }}" title="Dodaj trade ręcznie">
+                <span class="nav-icon">✍️</span><span class="nav-label">Dodaj ręcznie</span>
+            </a>
+            <a href="{{ url_for('import_page') }}" class="nav-item {{ 'active' if page == 'import' }}" title="Import i synchronizacja">
+                <span class="nav-icon">🔄</span><span class="nav-label">Import / Sync API</span>
+            </a>
+            <a href="{{ url_for('kalkulator') }}" class="nav-item {{ 'active' if page == 'kalkulator' }}" title="Kalkulator ryzyka">
+                <span class="nav-icon">🧮</span><span class="nav-label">Kalkulator ryzyka</span>
+            </a>
+
+            <div class="nav-divider"></div>
+
+            <a href="{{ url_for('export_csv') }}" class="nav-item" download title="Eksport do CSV">
+                <span class="nav-icon">💾</span><span class="nav-label">Eksport CSV</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="sidebar-toggle" id="sidebar-toggle" title="Zwiń / rozwiń menu">
+                ⇆ <span>Zwiń menu</span>
+            </button>
+        </div>
+    </aside>
+    <div class="sidebar-overlay"></div>
+
+    <!-- ============ TREŚĆ ============ -->
+    <div class="main-content">
+        <header class="top-header">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+                <h2>{% block header %}Journal Trade{% endblock %}</h2>
+            </div>
+            <div class="header-actions">
+                {% block header_actions %}
+                <a href="{{ url_for('import_page') }}" class="btn btn-secondary btn-sm">🔄 Import</a>
+                <a href="{{ url_for('add_trade') }}" class="btn btn-success btn-sm">＋ Dodaj trade</a>
+                {% endblock %}
+            </div>
+        </header>
+
+        <main class="page-container">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</div>
+
+<!-- Flash -> toast -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <div data-flash="{{ message }}" data-category="{{ category }}" hidden></div>
+    {% endfor %}
+{% endwith %}
+
+<div class="toast-container"></div>
+
+<div id="image-modal" class="modal-overlay" onclick="closeImageModal()">
+    <img src="" alt="Screenshot">
+</div>
+
+<div id="confirm-dialog" class="confirm-dialog">
+    <div class="confirm-box">
+        <h3>⚠️ Usunąć transakcję?</h3>
+        <p>Tej operacji nie można cofnąć. Screenshot również zostanie usunięty.</p>
+        <div class="confirm-actions">
+            <button class="btn btn-secondary" onclick="cancelDelete()">Anuluj</button>
+            <button class="btn btn-danger" onclick="executeDelete()">🗑️ Usuń</button>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='vendor/chart.umd.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

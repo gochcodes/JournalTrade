@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Historia tradów{% endblock %}
+{% block header %}📜 Historia tradów{% endblock %}
+{% block content %}
+
+<div class="filter-bar">
+    <div class="filter-group"><label>Instrument</label>
+        <select id="f-instrument"><option value="">Wszystkie</option></select></div>
+    <div class="filter-group"><label>Kierunek</label>
+        <select id="f-kierunek"><option value="">Wszystkie</option><option value="LONG">LONG</option><option value="SHORT">SHORT</option></select></div>
+    <div class="filter-group"><label>Tag</label>
+        <select id="f-tag"><option value="">Wszystkie</option></select></div>
+    <div class="filter-group"><label>Od</label><input type="date" id="f-from"></div>
+    <div class="filter-group"><label>Do</label><input type="date" id="f-to"></div>
+    <div class="filter-group"><label>Na stronę</label>
+        <select id="f-per"><option>20</option><option>50</option><option>100</option></select></div>
+    <button class="btn btn-secondary btn-sm" id="f-reset">↺ Wyczyść</button>
+    <a href="{{ url_for('export_csv') }}" class="btn btn-primary btn-sm" download style="margin-left:auto;">💾 Eksport CSV</a>
+</div>
+
+<div style="overflow-x:auto;">
+    <table class="data-table">
+        <thead><tr>
+            <th data-sort="trade_date">Data <span class="sort-arrow">▼</span></th>
+            <th>Godz.</th>
+            <th data-sort="instrument">Instrument <span class="sort-arrow">▼</span></th>
+            <th>Kierunek</th>
+            <th data-sort="entry_price">Entry <span class="sort-arrow">▼</span></th>
+            <th data-sort="exit_price">Exit <span class="sort-arrow">▼</span></th>
+            <th>Wielkość</th>
+            <th>Tagi</th>
+            <th>Źródło</th>
+            <th data-sort="profit_loss" style="text-align:right">P/L <span class="sort-arrow">▼</span></th>
+        </tr></thead>
+        <tbody id="h-body"></tbody>
+    </table>
+</div>
+<div class="preview-summary" style="justify-content:space-between;">
+    <span class="muted-text" id="h-info"></span>
+    <div class="pagination" id="h-pages" style="margin-top:0;"></div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const H = { sort: 'trade_date', dir: 'DESC', page: 1, filtersLoaded: false };
+const SRC = { manual: 'ręcznie', csv: 'CSV', html: 'HTML', 'mt-html': 'MT HTML', mt5: 'MT5 API', binance: 'Binance' };
+
+async function loadHistory() {
+    const body = document.getElementById('h-body');
+    body.innerHTML = Array.from({ length: 6 }, () =>
+        `<tr>${'<td><div class="skeleton skeleton-text"></div></td>'.repeat(10)}</tr>`).join('');
+    const p = new URLSearchParams({
+        instrument: f('instrument'), kierunek: f('kierunek'), tag: f('tag'),
+        date_from: f('from'), date_to: f('to'), per_page: f('per'),
+        sort: H.sort, dir: H.dir, page: H.page,
+    });
+    const d = await fetch('/api/trades?' + p).then(r => r.json());
+
+    if (!H.filtersLoaded) {
+        fill('f-instrument', d.instruments); fill('f-tag', d.tags); H.filtersLoaded = true;
+    }
+
+    body.innerHTML = d.trades.length ? d.trades.map((t, i) => `
+        <tr style="animation: fadeInUp .3s ease ${i * 25}ms backwards" onclick="location.href='/dzien/${t.trade_date}'">
+            <td>${JT.fmtDate(t.trade_date)}</td>
+            <td class="muted-text">${JT.esc((t.godzina_wejscia || '').slice(0, 5)) || '—'}</td>
+            <td><b>${JT.esc(t.instrument || '—')}</b></td>
+            <td><span class="trade-direction ${(t.kierunek || '').toLowerCase()}">${JT.esc(t.kierunek)}</span></td>
+            <td>${t.entry_price ?? '—'}</td>
+            <td>${t.exit_price ?? '—'}</td>
+            <td>${t.wielkosc_pozycji ?? '—'}</td>
+            <td>${(t.tagi || '').split(',').filter(x => x.trim()).map(x => `<span class="tag">${JT.esc(x.trim())}</span>`).join(' ')}</td>
+            <td><span class="source-badge">${SRC[t.source] || 'ręcznie'}</span></td>
+            <td style="text-align:right" class="${JT.plClass(t.profit_loss)}"><b>${JT.fmtPL(t.profit_loss)}</b></td>
+        </tr>`).join('')
+        : `<tr><td colspan="10"><div class="empty-state" style="padding:40px 0;"><div class="empty-icon">🔍</div>
+             <h3>Brak wyników</h3><p>Zmień filtry lub dodaj transakcje.</p></div></td></tr>`;
+
+    document.getElementById('h-info').textContent = `Znaleziono: ${d.total} · strona ${d.page} z ${Math.max(1, d.total_pages)}`;
+    const pg = document.getElementById('h-pages');
+    let html = `<button class="page-btn" ${d.page <= 1 ? 'disabled' : ''} data-p="${d.page - 1}">◀</button>`;
+    for (let i = 1; i <= d.total_pages; i++) {
+        if (i === 1 || i === d.total_pages || Math.abs(i - d.page) <= 2)
+            html += `<button class="page-btn ${i === d.page ? 'active' : ''}" data-p="${i}">${i}</button>`;
+        else if (Math.abs(i - d.page) === 3) html += '<span class="muted-text">…</span>';
+    }
+    html += `<button class="page-btn" ${d.page >= d.total_pages ? 'disabled' : ''} data-p="${d.page + 1}">▶</button>`;
+    pg.innerHTML = d.total_pages > 1 ? html : '';
+
+    document.querySelectorAll('th[data-sort]').forEach(th => {
+        const on = th.dataset.sort === H.sort;
+        th.classList.toggle('sorted', on);
+        th.querySelector('.sort-arrow').textContent = on && H.dir === 'ASC' ? '▲' : '▼';
+    });
+}
+const f = id => document.getElementById('f-' + id).value;
+function fill(id, items) {
+    const s = document.getElementById(id);
+    items.forEach(i => s.insertAdjacentHTML('beforeend', `<option value="${JT.esc(i)}">${JT.esc(i)}</option>`));
+}
+
+document.querySelectorAll('.filter-bar select, .filter-bar input').forEach(el =>
+    el.addEventListener('change', () => { H.page = 1; loadHistory(); }));
+document.getElementById('f-reset').addEventListener('click', () => {
+    document.querySelectorAll('.filter-bar select, .filter-bar input').forEach(el => {
+        el.value = el.id === 'f-per' ? '20' : '';
+    });
+    H.page = 1; loadHistory();
+});
+document.querySelectorAll('th[data-sort]').forEach(th => th.addEventListener('click', () => {
+    if (H.sort === th.dataset.sort) H.dir = H.dir === 'DESC' ? 'ASC' : 'DESC';
+    else { H.sort = th.dataset.sort; H.dir = 'DESC'; }
+    loadHistory();
+}));
+document.getElementById('h-pages').addEventListener('click', e => {
+    const b = e.target.closest('[data-p]');
+    if (b && !b.disabled) { H.page = +b.dataset.p; loadHistory(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+});
+loadHistory();
+</script>
+{% endblock %}

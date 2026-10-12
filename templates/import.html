@@ -1,0 +1,295 @@
+{% extends "base.html" %}
+{% block title %}Import i synchronizacja{% endblock %}
+{% block header %}🔄 Wprowadzanie transakcji{% endblock %}
+{% block content %}
+
+<div class="method-tabs">
+    <button class="method-tab" data-tab="api">
+        <span class="m-icon">🔌</span>
+        <div class="m-title">Automatyczna synchronizacja API</div>
+        <div class="m-desc">Połącz MetaTrader 5 lub Binance Futures — transakcje pobierają się same co kilka minut.</div>
+    </button>
+    <button class="method-tab" data-tab="plik">
+        <span class="m-icon">📂</span>
+        <div class="m-title">Import pliku CSV / HTML</div>
+        <div class="m-desc">Wgraj raport z MT4/MT5 lub plik CSV z dowolnego brokera. Duplikaty są pomijane.</div>
+    </button>
+    <button class="method-tab" data-tab="reczne">
+        <span class="m-icon">✍️</span>
+        <div class="m-title">Wprowadzanie ręczne</div>
+        <div class="m-desc">Pełna kontrola: ceny, notatki, tagi i screenshot wykresu.</div>
+    </button>
+</div>
+
+<!-- ================= API ================= -->
+<div class="method-panel" id="panel-api">
+    <div class="grid-2-1">
+        <div class="card">
+            <div class="card-title">Dostawca danych</div>
+            <div class="provider-select">
+                <input type="radio" name="provider" id="p-mt5" value="mt5">
+                <label for="p-mt5"><span style="font-size:1.6rem;">📈</span><span><b>MetaTrader 5</b><small>Forex, CFD, indeksy — przez lokalny terminal</small></span></label>
+                <input type="radio" name="provider" id="p-binance" value="binance">
+                <label for="p-binance"><span style="font-size:1.6rem;">🪙</span><span><b>Binance Futures</b><small>Krypto USDT-M — klucz API (tylko odczyt)</small></span></label>
+            </div>
+
+            <div class="provider-fields" id="fields-mt5">
+                {% if not mt5_available %}
+                <div class="info-box warn">⚠️ <b>Brak pakietu MetaTrader5.</b> Uruchom w terminalu:
+                    <code>pip install MetaTrader5</code> i zrestartuj aplikację. Wymagany jest zainstalowany terminal MT5 na tym komputerze.</div>
+                {% endif %}
+                <div class="info-box">Terminal MetaTrader 5 musi być <b>uruchomiony i zalogowany</b>. Pola logowania możesz zostawić puste — wtedy użyte zostanie aktualnie zalogowane konto.</div>
+                <div class="form-row">
+                    <div class="form-group"><label>Login (numer konta)</label><input type="text" id="s-mt5_login" placeholder="opcjonalnie"></div>
+                    <div class="form-group"><label>Hasło</label><input type="password" id="s-mt5_password" placeholder="opcjonalnie"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Serwer</label><input type="text" id="s-mt5_server" placeholder="np. ICMarketsSC-Demo"></div>
+                    <div class="form-group"><label>Ścieżka terminal64.exe</label><input type="text" id="s-mt5_path" placeholder="opcjonalnie"></div>
+                </div>
+            </div>
+
+            <div class="provider-fields" id="fields-binance">
+                <div class="info-box">🔐 Utwórz klucz w Binance → <b>Zarządzanie API</b> i zaznacz <b>tylko „Enable Reading”</b>. Nie włączaj handlu ani wypłat. Klucze są zapisywane wyłącznie lokalnie na tym komputerze.</div>
+                <div class="form-group"><label>API Key</label><input type="text" id="s-binance_key"></div>
+                <div class="form-group"><label>Secret Key</label><input type="password" id="s-binance_secret"></div>
+            </div>
+
+            <div class="nav-divider" style="margin:20px 0;"></div>
+            <div class="form-row">
+                <div class="form-group"><label>Pobieraj historię z ostatnich (dni)</label><input type="number" id="s-sync_days" min="1" max="365" value="30"></div>
+                <div class="form-group"><label>Interwał auto-sync (minuty)</label><input type="number" id="s-sync_interval" min="5" value="15"></div>
+            </div>
+            <div class="form-group">
+                <label class="switch"><input type="checkbox" id="s-auto_sync"><span class="slider"></span>
+                    <span>Automatyczna synchronizacja w tle (gdy aplikacja jest uruchomiona)</span></label>
+            </div>
+            <div class="form-actions" style="justify-content:flex-start;">
+                <button class="btn btn-secondary" id="btn-save">💾 Zapisz ustawienia</button>
+                <button class="btn btn-primary" id="btn-sync">🔄 Synchronizuj teraz</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Status synchronizacji</div>
+            <div class="sync-status"><span class="status-dot" id="sync-dot"></span><span id="sync-text">Nie skonfigurowano</span></div>
+            <div class="calc-result" style="margin-top:16px;">
+                <div class="calc-result-row"><span class="calc-result-label">Ostatnia synchronizacja</span><span class="calc-result-value" id="sync-last">—</span></div>
+                <div class="calc-result-row"><span class="calc-result-label">Auto-sync</span><span class="calc-result-value" id="sync-auto">wyłączony</span></div>
+            </div>
+            <div class="info-box" style="margin-top:16px;margin-bottom:0;">
+                <b>Jak to działa?</b>
+                <ul>
+                    <li>Pobierane są tylko <b>zamknięte</b> pozycje.</li>
+                    <li>Każda transakcja ma unikalny ID — ponowna synchronizacja <b>nie tworzy duplikatów</b>.</li>
+                    <li>Notatki, tagi i screeny możesz dodać później przez „Edytuj”.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= PLIK ================= -->
+<div class="method-panel" id="panel-plik">
+    <div class="grid-2-1">
+        <div class="card">
+            <div class="card-title">Wybierz plik</div>
+            <div class="dropzone" id="dropzone">
+                <input type="file" id="file-input" accept=".csv,.txt,.tsv,.htm,.html">
+                <div class="dz-icon">📥</div>
+                <div class="dz-title">Przeciągnij plik tutaj lub kliknij</div>
+                <div class="dz-sub">Obsługiwane: .csv, .html, .htm (MT4 Statement, MT5 Raport, brokerzy, eksport Journal Trade)</div>
+                <div id="file-chip-holder"></div>
+            </div>
+
+            <div id="preview-box" style="display:none;">
+                <div class="preview-summary">
+                    <div class="ps-item"><div class="summary-label">Znaleziono</div><div class="summary-value neutral" id="pv-count">0</div></div>
+                    <div class="ps-item"><div class="summary-label">Nowe</div><div class="summary-value positive" id="pv-new">0</div></div>
+                    <div class="ps-item"><div class="summary-label">Duplikaty</div><div class="summary-value" style="color:var(--text-muted)" id="pv-dup">0</div></div>
+                    <div class="ps-item"><div class="summary-label">Łączny P/L</div><div class="summary-value" id="pv-pl">0</div></div>
+                    <div class="ps-item"><div class="summary-label">Pominięte wiersze</div><div class="summary-value" style="color:var(--text-muted)" id="pv-skip">0</div></div>
+                </div>
+                <div class="preview-wrap">
+                    <table class="data-table">
+                        <thead><tr><th>Data</th><th>Godz.</th><th>Instrument</th><th>Kier.</th><th>Entry</th><th>Exit</th><th>Wielk.</th><th style="text-align:right">P/L</th><th>Status</th></tr></thead>
+                        <tbody id="pv-body"></tbody>
+                    </table>
+                </div>
+                <div class="form-row" style="margin-top:16px;align-items:end;">
+                    <div class="form-group" style="margin-bottom:0;"><label>Dodaj tag do importowanych (opcjonalnie)</label><input type="text" id="import-tag" placeholder="np. konto-demo"></div>
+                    <div class="form-actions" style="margin-top:0;">
+                        <button class="btn btn-secondary" id="btn-cancel-import">Anuluj</button>
+                        <button class="btn btn-success" id="btn-import">📥 Importuj</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Jak wyeksportować raport?</div>
+            <div class="info-box"><b>MetaTrader 5</b>
+                <ol><li>Zakładka <b>Historia</b> w oknie Terminal.</li><li>Prawy przycisk → <b>Raport</b> → <b>HTML</b>.</li><li>Wgraj zapisany plik tutaj.</li></ol></div>
+            <div class="info-box"><b>MetaTrader 4</b>
+                <ol><li>Zakładka <b>Historia rachunku</b>.</li><li>Prawy przycisk → <b>Zapisz jako raport</b>.</li></ol></div>
+            <div class="info-box" style="margin-bottom:0;"><b>CSV z dowolnego źródła</b> — wymagane kolumny (nazwy PL lub EN):
+                <ul><li>data/czas (<i>Date, Time, Open Time</i>)</li><li>instrument (<i>Symbol, Instrument</i>)</li><li>zysk (<i>Profit, P/L, PnL, Zysk</i>)</li></ul>
+                Opcjonalne: kierunek, cena wejścia/wyjścia, wolumen, prowizja, swap, tagi, notatki.</div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= RĘCZNIE ================= -->
+<div class="method-panel" id="panel-reczne">
+    <div class="card" style="text-align:center;padding:48px 24px;">
+        <div style="font-size:3rem;margin-bottom:12px;animation:float 3s ease-in-out infinite;display:inline-block;">✍️</div>
+        <h3 style="margin-bottom:8px;">Ręczne dodawanie transakcji</h3>
+        <p class="muted-text" style="max-width:520px;margin:0 auto 24px;">Uzupełnij godzinę wejścia, ceny, wielkość pozycji, notatki i tagi. P/L może zostać obliczony automatycznie z cen. Screenshot wkleisz skrótem <span class="kbd">Ctrl+V</span>.</p>
+        <a href="{{ url_for('add_trade') }}" class="btn btn-success">＋ Dodaj trade ręcznie</a>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+/* ---------- zakładki ---------- */
+function showTab(name) {
+    document.querySelectorAll('.method-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+    document.querySelectorAll('.method-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + name));
+    history.replaceState({}, '', '#' + name);
+}
+document.querySelectorAll('.method-tab').forEach(t => t.addEventListener('click', () => showTab(t.dataset.tab)));
+showTab(['api', 'plik', 'reczne'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'plik');
+
+/* ---------- API ---------- */
+const FIELDS = ['mt5_login', 'mt5_password', 'mt5_server', 'mt5_path', 'binance_key', 'binance_secret', 'sync_days', 'sync_interval'];
+function showProvider(p) {
+    document.querySelectorAll('.provider-fields').forEach(f => f.classList.toggle('active', f.id === 'fields-' + p));
+}
+document.querySelectorAll('input[name="provider"]').forEach(r => r.addEventListener('change', () => showProvider(r.value)));
+
+function renderStatus(s) {
+    const dot = document.getElementById('sync-dot'), text = document.getElementById('sync-text');
+    document.getElementById('sync-last').textContent = s.last_sync || '—';
+    document.getElementById('sync-auto').textContent = s.auto_sync === '1' ? `co ${s.sync_interval || 15} min` : 'wyłączony';
+    dot.className = 'status-dot';
+    if (!s.sync_provider) { text.textContent = 'Nie skonfigurowano — wybierz dostawcę'; return; }
+    const ok = s.last_sync_result && /^Pobrano/.test(s.last_sync_result);
+    if (s.last_sync_result) dot.classList.add(ok ? 'ok' : 'err');
+    text.textContent = s.last_sync_result || `Gotowe do synchronizacji (${s.sync_provider === 'mt5' ? 'MetaTrader 5' : 'Binance'})`;
+}
+
+async function loadSettings() {
+    const s = await fetch('/api/sync/settings').then(r => r.json());
+    FIELDS.forEach(k => { if (s[k]) document.getElementById('s-' + k).value = s[k]; });
+    document.getElementById('s-auto_sync').checked = s.auto_sync === '1';
+    if (s.sync_provider) {
+        document.getElementById('p-' + s.sync_provider).checked = true;
+        showProvider(s.sync_provider);
+    }
+    renderStatus(s);
+}
+
+async function saveSettings(silent) {
+    const provider = document.querySelector('input[name="provider"]:checked')?.value || '';
+    if (!provider) { JT.toast('Wybierz dostawcę (MT5 lub Binance)', 'error'); return false; }
+    const payload = { sync_provider: provider, auto_sync: document.getElementById('s-auto_sync').checked ? '1' : '0' };
+    FIELDS.forEach(k => payload[k] = document.getElementById('s-' + k).value);
+    const r = await fetch('/api/sync/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).then(r => r.json());
+    if (!silent) JT.toast(r.message, r.ok ? 'success' : 'error');
+    return r.ok;
+}
+
+document.getElementById('btn-save').addEventListener('click', async () => { if (await saveSettings()) loadSettings(); });
+document.getElementById('btn-sync').addEventListener('click', async e => {
+    const btn = e.currentTarget;
+    if (!(await saveSettings(true))) return;
+    btn.disabled = true;
+    const old = btn.innerHTML;
+    btn.innerHTML = '<span class="spinner"></span> Synchronizuję...';
+    document.getElementById('sync-dot').className = 'status-dot running';
+    document.getElementById('sync-text').textContent = 'Trwa pobieranie transakcji...';
+    try {
+        const r = await fetch('/api/sync/run', { method: 'POST' }).then(r => r.json());
+        JT.toast(r.message, r.ok ? 'success' : 'error', 6000);
+    } catch (err) {
+        JT.toast('Błąd połączenia z aplikacją', 'error');
+    }
+    btn.disabled = false;
+    btn.innerHTML = old;
+    loadSettings();
+});
+loadSettings();
+
+/* ---------- PLIK ---------- */
+const dz = document.getElementById('dropzone'), fileInput = document.getElementById('file-input');
+let currentFile = null;
+['dragenter', 'dragover'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add('dragover'); }));
+['dragleave', 'drop'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove('dragover'); }));
+dz.addEventListener('drop', e => { if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
+fileInput.addEventListener('change', () => { if (fileInput.files[0]) handleFile(fileInput.files[0]); });
+
+async function handleFile(file) {
+    currentFile = file;
+    document.getElementById('file-chip-holder').innerHTML =
+        `<span class="file-chip">📄 ${JT.esc(file.name)} · ${(file.size / 1024).toFixed(1)} KB <span class="spinner" style="border-top-color:var(--accent-blue)"></span></span>`;
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('preview', '1');
+    let r;
+    try { r = await fetch('/api/import/file', { method: 'POST', body: fd }).then(x => x.json()); }
+    catch (e) { r = { ok: false, message: 'Błąd połączenia z aplikacją' }; }
+    document.querySelector('.file-chip .spinner')?.remove();
+    if (!r.ok) {
+        JT.toast(r.message, 'error', 7000);
+        document.getElementById('preview-box').style.display = 'none';
+        return;
+    }
+    const dup = r.trades.filter(t => t.duplicate).length;
+    document.getElementById('pv-count').textContent = r.trades.length;
+    document.getElementById('pv-new').textContent = r.trades.length - dup;
+    document.getElementById('pv-dup').textContent = dup;
+    document.getElementById('pv-skip').textContent = r.skipped;
+    const pl = document.getElementById('pv-pl');
+    pl.textContent = JT.fmtPL(r.total_pl);
+    pl.className = 'summary-value ' + JT.plClass(r.total_pl);
+    document.getElementById('pv-body').innerHTML = r.trades.map((t, i) => `
+        <tr class="${t.duplicate ? 'dup' : ''}" style="animation: fadeInUp .3s ease ${Math.min(i, 30) * 20}ms backwards">
+            <td>${JT.fmtDate(t.trade_date)}</td><td>${JT.esc(t.godzina_wejscia.slice(0, 5))}</td>
+            <td><b>${JT.esc(t.instrument)}</b></td>
+            <td><span class="trade-direction ${t.kierunek.toLowerCase()}">${t.kierunek}</span></td>
+            <td>${t.entry_price ?? '—'}</td><td>${t.exit_price ?? '—'}</td><td>${t.wielkosc_pozycji ?? '—'}</td>
+            <td style="text-align:right" class="${JT.plClass(t.profit_loss)}"><b>${JT.fmtPL(t.profit_loss)}</b></td>
+            <td>${t.duplicate ? '<span class="muted-text">już istnieje</span>' : '<span class="positive">nowy</span>'}</td>
+        </tr>`).join('');
+    document.getElementById('preview-box').style.display = 'block';
+    document.getElementById('btn-import').disabled = dup === r.trades.length;
+}
+
+document.getElementById('btn-cancel-import').addEventListener('click', () => {
+    currentFile = null; fileInput.value = '';
+    document.getElementById('preview-box').style.display = 'none';
+    document.getElementById('file-chip-holder').innerHTML = '';
+});
+
+document.getElementById('btn-import').addEventListener('click', async e => {
+    if (!currentFile) return;
+    const btn = e.currentTarget;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Importuję...';
+    const fd = new FormData();
+    fd.append('file', currentFile);
+    fd.append('tag', document.getElementById('import-tag').value);
+    const r = await fetch('/api/import/file', { method: 'POST', body: fd }).then(x => x.json()).catch(() => ({ ok: false, message: 'Błąd połączenia' }));
+    btn.innerHTML = '📥 Importuj';
+    JT.toast(r.message, r.ok ? 'success' : 'error', 6000);
+    if (r.ok) {
+        document.getElementById('btn-cancel-import').click();
+        if (r.added) setTimeout(() => location.href = '/kalendarz', 1200);
+    } else {
+        btn.disabled = false;
+    }
+});
+</script>
+{% endblock %}

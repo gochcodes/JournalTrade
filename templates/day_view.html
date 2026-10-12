@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}{{ trade_date }}{% endblock %}
+{% block header %}📅 Dzień {{ trade_date }}{% endblock %}
+{% block header_actions %}
+<a href="{{ url_for('kalendarz', year=trade_date[:4]|int, month=trade_date[5:7]|int) }}" class="btn btn-secondary btn-sm">◀ Kalendarz</a>
+<a href="{{ url_for('add_trade', date=trade_date) }}" class="btn btn-success btn-sm">＋ Dodaj trade</a>
+{% endblock %}
+{% block content %}
+
+{% set src_names = {'manual': 'ręcznie', 'csv': 'CSV', 'html': 'HTML', 'mt-html': 'MT HTML', 'mt5': 'MT5 API', 'binance': 'Binance'} %}
+
+{% if trades | length > 0 %}
+{% set total = summary['total_pl'] or 0 %}
+{% set wins = trades | selectattr('profit_loss', 'gt', 0) | list | length %}
+<div class="day-summary">
+    <div class="summary-item"><div class="summary-label">Transakcje</div><div class="summary-value neutral">{{ summary['count'] }}</div></div>
+    <div class="summary-item"><div class="summary-label">Wynik dnia</div>
+        <div class="summary-value {{ 'positive' if total > 0 else ('negative' if total < 0 else 'neutral') }}">{{ '+' if total > 0 }}{{ "%.2f"|format(total) }}</div></div>
+    <div class="summary-item"><div class="summary-label">Wygrane</div><div class="summary-value positive">{{ wins }}</div></div>
+    <div class="summary-item"><div class="summary-label">Przegrane</div><div class="summary-value negative">{{ trades | selectattr('profit_loss', 'lt', 0) | list | length }}</div></div>
+    <div class="summary-item"><div class="summary-label">Winrate dnia</div><div class="summary-value neutral">{{ "%.0f"|format(wins / trades|length * 100) }}%</div></div>
+</div>
+
+<div>
+{% for trade in trades %}
+{% set pl = trade['profit_loss'] or 0 %}
+<div class="trade-card {{ 'profit-card' if pl > 0 else ('loss-card' if pl < 0 else '') }}" style="animation-delay: {{ loop.index0 * 0.07 }}s">
+    <div class="trade-card-header">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <span class="trade-instrument">{{ trade['instrument'] or 'Brak instrumentu' }}</span>
+            <span class="trade-direction {{ (trade['kierunek'] or '')|lower }}">{{ trade['kierunek'] }}</span>
+            <span class="source-badge">{{ src_names.get(trade['source'] or 'manual', 'ręcznie') }}</span>
+        </div>
+        <span class="{{ 'positive' if pl > 0 else ('negative' if pl < 0 else 'neutral') }}" style="font-size:1.4rem;font-weight:700;">
+            {{ '+' if pl > 0 }}{{ "%.2f"|format(pl) }}
+        </span>
+    </div>
+
+    {% if trade['tagi'] %}
+    <div class="trade-tags">
+        {% for tg in trade['tagi'].split(',') if tg.strip() %}<span class="tag">{{ tg.strip() }}</span>{% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="trade-details-grid">
+        <div class="trade-detail"><div class="detail-label">Godzina wejścia</div><div class="detail-value">{{ trade['godzina_wejscia'] or '—' }}</div></div>
+        <div class="trade-detail"><div class="detail-label">Entry Price</div><div class="detail-value">{{ trade['entry_price'] if trade['entry_price'] is not none else '—' }}</div></div>
+        <div class="trade-detail"><div class="detail-label">Exit Price</div><div class="detail-value">{{ trade['exit_price'] if trade['exit_price'] is not none else '—' }}</div></div>
+        <div class="trade-detail"><div class="detail-label">Wielkość pozycji</div><div class="detail-value">{{ trade['wielkosc_pozycji'] if trade['wielkosc_pozycji'] is not none else '—' }}</div></div>
+    </div>
+
+    {% if trade['notatki'] %}
+    <div class="trade-notes"><h4>📝 Notatki</h4><p>{{ trade['notatki'] }}</p></div>
+    {% endif %}
+
+    {% if trade['screenshot'] %}
+    <div class="trade-screenshot">
+        <img src="{{ url_for('uploaded_file', filename=trade['screenshot']) }}" alt="Screenshot" onclick="openImageModal(this.src)">
+    </div>
+    {% endif %}
+
+    <div class="trade-card-actions">
+        <a href="{{ url_for('edit_trade', trade_id=trade['id']) }}" class="btn btn-primary btn-sm">✏️ Edytuj {{ '/ dodaj screen' if not trade['screenshot'] }}</a>
+        <form id="delete-form-{{ trade['id'] }}" action="{{ url_for('delete_trade', trade_id=trade['id']) }}" method="POST" style="display:inline;">
+            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('delete-form-{{ trade['id'] }}')">🗑️ Usuń</button>
+        </form>
+    </div>
+</div>
+{% endfor %}
+</div>
+
+{% else %}
+<div class="empty-state">
+    <div class="empty-icon">📊</div>
+    <h3>Brak transakcji w tym dniu</h3>
+    <p>Dodaj trade ręcznie lub zaimportuj plik z platformy.</p>
+    <div style="display:flex;gap:10px;justify-content:center;">
+        <a href="{{ url_for('add_trade', date=trade_date) }}" class="btn btn-success">✍️ Dodaj ręcznie</a>
+        <a href="{{ url_for('import_page') }}" class="btn btn-secondary">🔄 Import</a>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

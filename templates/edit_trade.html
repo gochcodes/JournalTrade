@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Edytuj trade{% endblock %}
+{% block header %}✏️ Edycja transakcji{% endblock %}
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <h2>✏️ Edytuj trade</h2>
+        {% set t = trade %}
+        {% set cancel_url = url_for('day_view', trade_date=trade['trade_date']) %}
+        {% include "_trade_form.html" %}
+    </div>
+</div>
+{% endblock %}

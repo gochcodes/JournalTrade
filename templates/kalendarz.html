@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Kalendarz{% endblock %}
+{% block header %}📅 Kalendarz{% endblock %}
+{% block content %}
+
+<div class="stats-grid">
+    <div class="stat-card blue"><div class="stat-label">Trade’y w miesiącu</div><div class="stat-value neutral" id="stat-total-trades">0</div></div>
+    <div class="stat-card gold"><div class="stat-label">Wynik miesiąca</div><div class="stat-value neutral" id="stat-total-pl">0,00</div></div>
+    <div class="stat-card green"><div class="stat-label">Wygrane</div><div class="stat-value positive" id="stat-winning">0</div></div>
+    <div class="stat-card red"><div class="stat-label">Przegrane</div><div class="stat-value negative" id="stat-losing">0</div></div>
+    <div class="stat-card blue"><div class="stat-label">Winrate</div><div class="stat-value neutral" id="stat-winrate">0%</div></div>
+    <div class="stat-card gold"><div class="stat-label">Średni P/L</div><div class="stat-value neutral" id="stat-avg-pl">0,00</div></div>
+</div>
+
+<div class="calendar-header">
+    <h2 id="calendar-title">—</h2>
+    <div class="calendar-nav">
+        <button class="btn btn-secondary btn-sm" onclick="changeMonth(-1)">◀ Poprzedni</button>
+        <button class="btn btn-secondary btn-sm" onclick="goToday()" style="color:var(--accent-gold);">Dziś</button>
+        <button class="btn btn-secondary btn-sm" onclick="changeMonth(1)">Następny ▶</button>
+    </div>
+</div>
+
+<div class="calendar-layout">
+    <div class="calendar-grid" id="calendar-grid" data-year="{{ year }}" data-month="{{ month }}"></div>
+    <div class="card">
+        <div class="card-title">Podsumowanie tygodni</div>
+        <div id="weekly-summary"></div>
+        <div class="nav-divider" style="margin:16px 0;"></div>
+        <p class="muted-text">💡 Kliknij dzień z transakcjami, aby zobaczyć szczegóły, lub pusty dzień, aby dodać trade.</p>
+        <p class="muted-text" style="margin-top:8px;">⌨️ Zmiana miesiąca: <span class="kbd">←</span> <span class="kbd">→</span></p>
+    </div>
+</div>
+
+{% endblock %}

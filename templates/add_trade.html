@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Dodaj trade{% endblock %}
+{% block header %}✍️ Dodaj trade ręcznie{% endblock %}
+{% block content %}
+<div class="form-container">
+    <div class="info-box" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span>💡 Masz wiele transakcji? Zaimportuj plik z platformy lub włącz automatyczną synchronizację API.</span>
+        <a href="{{ url_for('import_page') }}" class="btn btn-secondary btn-sm">🔄 Import / Sync</a>
+    </div>
+    <div class="form-card">
+        <h2>＋ Nowy trade</h2>
+        {% set t = None %}
+        {% set cancel_url = url_for('kalendarz') %}
+        {% include "_trade_form.html" %}
+    </div>
+</div>
+{% endblock %}

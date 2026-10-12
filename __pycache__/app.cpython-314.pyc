@@ -1,0 +1,873 @@
++
+    ş—Ëj€…  ã                   ó  € R t ^ RIt^ RIt^ RIt^ RIt^ RIt^ RIt^ RI t ^ RIt^ RI	t	^ RI
+H
+t
+H
+t
+Ht ^ RI
+HtHtHtHtHtHtHtHtHtHt ]! ]RR4      '       d'   ]P2                  P5                  ]P6                  4      tM4]P2                  P5                  ]P2                  P;                  ]4      4      t]! ]]P2                  PA                  ]R4      ]P2                  PA                  ]R 4      R7      t!R	]!n"        ]P2                  PA                  ]R
+R
+4      t#]P2                  PA                  ]R R4      t$0 RPmt%]$]!PL                  R
+&   RQ]!PL                  R&   R t'R t(R t)]!PU                  R4      R 4       t+]!PU                  R4      R 4       t,]!PU                  R4      R 4       t-]!PU                  R4      R 4       t.]!PU                  R4      R 4       t/]!PU                  R4      R 4       t0]!PU                  RRR .R!7      R" 4       t1]!PU                  R#RR .R!7      R$ 4       t2]!PU                  R%R .R!7      R& 4       t3]!PU                  R'4      R( 4       t4]!PU                  R)4      R* 4       t5]!PU                  R+4      R, 4       t6]!PU                  R-4      R. 4       t7]!PU                  R/4      R0 4       t8]!PU                  R14      R2 4       t9]!PU                  R34      R4 4       t:^ RI;t;. RROt<R5R60t=]P|                  ! 4       t?R7 t@R8 tAR9 tBR: tCR; tD]!PU                  R<4      R= 4       tE]!PU                  R>R .R!7      R? 4       tF]!PU                  R@RR .R!7      RA 4       tG]!PU                  RBR .R!7      RC 4       tH]RD8X  d—   ](! 4        REtIRF]I 2tJRG tK]P˜                  ! ]KRHRI7      P›                  4        ]P˜                  ! ]DRHRI7      P›                  4        ]N! RJ4       ]N! RK4       ]N! RL]J 24       ]N! RM4       ]N! RJ4       ]!PŸ                  RN]IRRO7       R# R# )Szi
+Journal Trade - Profesjonalny Trading Journal
+Kompletna aplikacja do prowadzenia dziennika tradingowego.
+N)ÚdatetimeÚdateÚ	timedelta)
+ÚFlaskÚrender_templateÚ requestÚredirectÚ url_forÚ jsonifyÚflashÚsend_from_directoryÚResponseÚ
+make_responseÚfrozenFÚ	templatesÚstatic)Útemplate_folderÚ
+static_folderzjournal-trade-secret-key-2024Údataz	trades.dbÚ uploadsÚ
+UPLOAD_FOLDERÚMAX_CONTENT_LENGTHc                 ó†   € \         P                  ! \        4      p \         P                  V n        V P
+                  R4       V # )zPolaczenie z baza danych.zPRAGMA journal_mode=WAL)Ú sqlite3Ú connectÚ DB_PATHÚRowÚ
+row_factoryÚ execute)Úconns    Ú'c:\Users\Praca\Desktop\aplikacja\app.pyÚget_dbr!   (   s.   € ä
+?Š?œ7Ó
+#€DÜ—{‘{€DÔØ‡LLĞ*Ô+Ø
+€Kó    c                  ó  € \         P                  ! \         P                  P                   \        4      RR7       \         P                  ! \
+        RR7       \
+        4       p V P                  R4       V P                  R4      P                  4        Uu0 uF
+  qR,          kK
+  	  ppR
+ F$  w  r4W29  g   K
+  V P                  RV R V 24       K&  	  V P                  R4       V P                  4        V P                  4        R	# u upi )
+zInicjalizuj baze danych.T)Úexist_okaî  
+        CREATE TABLE IF NOT EXISTS trades (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            trade_date DATE NOT NULL,
+            godzina_wejscia TEXT,
+            instrument TEXT,
+            kierunek TEXT DEFAULT 'LONG',
+            entry_price REAL,
+            exit_price REAL,
+            wielkosc_pozycji REAL,
+            profit_loss REAL DEFAULT 0,
+            notatki TEXT,
+            tagi TEXT DEFAULT '',
+            screenshot TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_trades_date ON trades(trade_date);
+        CREATE INDEX IF NOT EXISTS idx_trades_instrument ON trades(instrument);
+    zPRAGMA table_info(trades)ÚnamezALTER TABLE trades ADD COLUMN Ú z÷
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_trades_external
+            ON trades(external_id) WHERE external_id IS NOT NULL;
+        CREATE TABLE IF NOT EXISTS settings (
+            key TEXT PRIMARY KEY,
+            value TEXT
+        );
+    N))ÚtagizTEXT DEFAULT '')ÚsourcezTEXT DEFAULT 'manual')Ú
+external_idÚTEXT)ÚosÚmakedirsÚpathÚ dirnamer   r   r!   Ú
+executescriptr   ÚfetchallÚcommitÚclose)r   ÚrÚexistingÚcolÚddls        r    Ú init_dbr7   0   sÓ   € ä‡K‚K”— ‘ —‘¤ Ó(°4Õ8Ü‡K‚K”
+¨Õ-ä
+‹8€DØ×Ñğ ô 	ğ. $(§<¡<Ğ0KÓ#L×#UÑ#UÔ#WÓXÑ#W˜a&—		Ñ#W€HĞXó.‰ˆğ Ö
+ØL‰LĞ9¸#¸¸aÀ¸uĞEÖFñ	.ğ
+ 	×Ñğ  ô  	ğ 	‡KK„MØ‡JJ†Lùò! Ys   ÂDc                óx   € RV 9   ;'       d/    V P                  R^4      ^,          P                  4       \        9   # )z.Sprawdz czy rozszerzenie pliku jest dozwolone.Ú.)ÚrsplitÚlowerÚALLOWED_EXTENSIONS©Úfilenames   &r    Úallowed_filer?   `   s=   € à
+(‰?÷ Dğ DØ
+?‰?˜3 Ó
+" 1Õ
+%×
++Ñ
++Ó
+-Ô1CÑ
+CğDr"   Ú/c                 ó   € \        RRR7      # )zDashboard - strona glowna.zdashboard.htmlÚ	dashboard©Úpage©r   © r"   r    ÚindexrG   j   s   € ô Ğ+°+Ô
+>Ğ>r"   z
+/kalendarzc                 ó
+  € \         P                  ! 4       p \        P                  P	                  RV P
+                  \        R7      p\        P                  P	                  RV P                  \        R7      p\        RWV RR7      # ) zWidok kalendarza.Úyear©ÚtypeÚmonthzkalendarz.htmlÚ	kalendarz)rI   rL   ÚtodayrD   )	r   rN   r    ÚargsÚgetrI   ÚintrL   r   )rN   rI   rL   s      r    rM   rM   p   s`   € ô 
+JŠJ‹L€EÜ
+<‰<×
+Ñ
+˜F E§J¡J´SĞ
+Ó
+9€DÜL‰L×Ñ˜W e§k¡k¼ĞÓ<€EÜ
+Ğ+°$È5ĞWbÔ
+cĞcr"   z
+/statystykic                 ó   € \        RRR7      # )zStrona statystyk.zstatystyki.htmlÚ
+statystykirC   rE   rF   r"   r    rS   rS   y   ó   € ô Ğ,°<Ô
+@Ğ@r"   z	/historiac                 ó   € \        RRR7      # )zHistoria tradow.z
+historia.htmlÚhistoriarC   rE   rF   r"   r    rV   rV      s   € ô ˜?°Ô
+<Ğ<r"   z
+/kalkulatorc                 ó   € \        RRR7      # )zKalkulator ryzyka.zkalkulator.htmlÚ
+kalkulatorrC   rE   rF   r"   r    rX   rX   …   rT   r"   z/dzien/<trade_date>c                óÚ   € \        4       pVP                  RV 34      P                  4       pVP                  RV 34      P                   4       pVP	                  4        \
+        RVV VRR7      # )zWidok szczegolowy dnia.zBSELECT * FROM trades WHERE trade_date = ? ORDER BY godzina_wejsciaz…
+        SELECT
+            COUNT(*) as count,
+            SUM(profit_loss) as total_pl
+        FROM trades WHERE trade_date = ?
+    z
+day_view.htmlrM   )ÚtradesÚ
+trade_dateÚ summaryrD   )r!   r   r0   Úfetchoner2   r   )r[   r   rZ   r\   s   &   r    Úday_viewr^   ‹   s{   € ô ‹8€DØ
+\‰\ØLØ	ˆ
+ó÷  hƒjğ  
+ğ
+ l‰lğ ğ
+ 
+ˆó
+÷
+ !™›
+ğ
+ ğ 	‡JJ„LÜ
+˜?Ø"(Ø&0Ø#*Ø +ô	-ğ -r"   z/dodajÚGETÚPOST)Ú methodsc                 óô   € \         P                  R8X  Edó   \         P                  P                   R\        P
+                  ! 4       P
+                  4       4      p \         P                  P                   RR4      p\         P                  P                   RR4      P                  4       P                  4       p\         P                  P                   RR 4      p\         P                  P                   RR	\        R
+7      p\         P                  P                   R
+R	\        R
+7      p\         P                  P                   RR	\        R
+7      p\         P                  P                   R
+^ \        R
+7      p \         P                  P                   RR4      p\         P                  P                   RR4      P                  4       p	R	p
+R\         P                  9   dÕ   \         P                  R,          p
+V
+'       d¶   V
+P                  '       d¤   \        V
+P                  4      '       d‰   V
+P                  P                  R^4      ^,          P                  4       p\        P                   ! 4       P"                   RV 2p
+V
+P%                  \&        P(                  P+                  \,        V
+4      4       \/        4       p
+V
+P1                  RWW#VWVWxWš3
+4       V
+P3                  4        V
+P5                  4        \7        RR4       \9        \;        RV R7      4      # \        P
+                  ! 4       P
+                  4       p\         P<                  P                   RV4      p\/        4       p
+V
+P1                  R4      P?                  4       pV
+P5                  4        \A        4       pV FM  pVR,          PC                  R4       F.  pVP                  4       pV'       g   K  VPE                  V4       K0  	  KO  	  \G        RV\I        V4      RR7      # )zDodaj nowy trade.r`   r[   Úgodzina_wejsciaÚ Ú
+instrumentÚkierunekÚLONGÚ
+entry_priceNrJ   Ú
+exit_priceÚwielkosc_pozycjiÚ
+profit_lossÚ notatkir'   Ú
+screenshotr9   zı
+            INSERT INTO trades
+            (trade_date, godzina_wejscia, instrument, kierunek, entry_price,
+             exit_price, wielkosc_pozycji, profit_loss, notatki, tagi, screenshot)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        u   Trade zostaÅ‚ dodany!Ú successr^   ©r[   r   úFSELECT DISTINCT tagi FROM trades WHERE tagi != '' AND tagi IS NOT NULLÚ,zadd_trade.htmlÚdodaj)Ú
+selected_dateÚall_tagsrD   )%r    ÚmethodÚformrP   r   rN   Ú	isoformatÚupperÚstripÚfloatÚfilesr>   r?   r:   r;   ÚuuidÚuuid4ÚhexÚsaver+   r-   Újoinr   r!   r   r1   r2   r
+   r   r	   rO   r0   ÚsetÚsplitÚaddr   Úsorted)r[   rc   re   rf   rh   ri   rj   rk   rl   r'   Úscreenshot_filenameÚfileÚextr   rN   rs   Útag_rowsrt   ÚrowÚtags                       r    Ú	add_trader‹   £   sÚ  € ô ‡~~˜Õ Ü—\‘\×%Ñ% l´D·J²J³L×4JÑ4JÓ4LÓMˆ
+Ü!Ÿ,™,×*Ñ*Ğ+<¸bÓAˆÜ—\‘\×%Ñ% l°BÓ7×=Ñ=Ó?×EÑEÓGˆ
+Ü—<‘<×#Ñ# J°Ó7ˆÜ—l‘l×&Ñ& }°dÄĞ&ÓGˆ
+Ü—\‘\×%Ñ% l°D¼uĞ%ÓEˆ
+Ü"Ÿ<™<×+Ñ+Ğ,>ÀÌ5Ğ+ÓQĞÜ—l‘l×&Ñ& }°a¼eĞ&ÓDˆ
+Ü—,‘,×"Ñ" 9¨bÓ1ˆ Ü|‰|×Ñ ¨Ó+×1Ñ1Ó3ˆà"ĞØ
+œ7Ÿ=™=Ô
+(Ü—=‘= Õ.ˆDß˜Ÿ
+Ÿ
+˜
+¬,°t·}±}×*EÒ*EØ—m‘m×*Ñ*¨3°Ó2°1Õ5×;Ñ;Ó=Ü)-¯ª«×)9Ñ)9Ğ(:¸!¸C¸5Ğ&AĞ#Ø—	‘	œ"Ÿ'™'Ÿ,™,¤}Ğ6IÓJÔKä‹xˆØ‰ğ ğ
+ ¨:ÀØ¨KÀ$ğ]ô
+	^ğ 	
+
+‰
+Œ
+Ø
+‰
+Œä
+Ğ% yÔ1Üœ  
+°zÔBÓCĞCäJŠJ‹L×"Ñ"Ó$€EÜ—L‘L×$Ñ$ V¨UÓ3€Mô ‹8€DØ|‰|ĞdÓe×nÑnÓp€HØ‡JJ„LÜ‹u€HÛˆØv•;×$Ñ$ SÖ)ˆCØ—)‘)“+ˆCß‰sØ—‘˜SÖ!ó  *ñ ô Ğ+¸=ÔSYĞZbÓScĞjqÔ
+rĞrr"   z/edytuj/<int:trade_id>c                óº  € \        4       p\        P                  R8X  EdP   \        P                  P	                  R4      p\        P                  P	                  RR4      p\        P                  P	                  RR4      P
+                  4       P
+                  4       p\        P                  P	                  RR 4      p\        P                  P	                  RR	\        R
+7      p\        P                  P	                  R
+R	\        R
+7      p \        P                  P	                  RR	\        R
+7      p\        P                  P	                  R
+^ \        R
+7      p	\        P                  P	                  RR4      p
+\        P                  P	                  RR4      P
+                  4       p
+\        P                  P	                  RR	4      pR\        P                  9   Ed>   \        P                  R,          p
+V
+'       Ed   V
+P                  '       Ed
+   \        V
+P                  4      '       dğ   V'       d`   \        P                  P                  \        V4      p\        P                  P                  V4      '       d   \        P                   ! V4       V
+P                  P#                  R^4      ^,          P%                  4       p\&        P(                  ! 4       P*                   RV 2pV
+P-                  \        P                  P                  \        V4      4       VP/                  RW#WEVWxWšV
+WÀ34       VP1                  4        VP3                  4        \5        RR4       \7        \9        RVR7      4      # VP/                  RV 34      P;                  4       pVP/                  R4      P=                  4       pVP3                  4        \?        4       pV FM  pVR,          PA                  R4       F.  pVP
+                  4       pV'       g   K  VPC                  V4       K0  	  KO  	  V'       g!   \5        RR4       \7        \9        R4      4      # \E        RV\G        V4      RR 7      # )!zEdytuj istniejacy trade.r`   r[   rc   rd   re   rf   rg   rh   NrJ   ri   rj   rk   rl   r'   Úexisting_screenshotrm   r9   aQ  
+            UPDATE trades SET
+                trade_date = ?, godzina_wejscia = ?, instrument = ?, kierunek = ?,
+                entry_price = ?, exit_price = ?, wielkosc_pozycji = ?,
+                profit_loss = ?, notatki = ?, tagi = ?, screenshot = ?,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+        u   Trade zostaÅ‚ zaktualizowany!rn   r^   ro   z!SELECT * FROM trades WHERE id = ?rp   rq   zNie znaleziono transakcji.ÚerrorrG   zedit_trade.htmlrM   )Útradert   rD   )$r!   r    ru   rv   rP   rx   ry   rz   r{   r>   r?   r+   r-   r€   r   ÚexistsÚremover:   r;   r|   r}   r~   r   r   r1   r2   r
+   r   r	   r]   r0   r   r‚   rƒ   r   r„   )Útrade_idr   r[   rc   re   rf   rh   ri   rj   rk   rl   r'   r…   r†   Úold_pathr‡   r   rˆ   rt   r‰   rŠ   s   &                    r    Ú
+edit_trader”   Ù   s  € ô ‹8€Dä ‡~~˜Õ Ü—\‘\×%Ñ% lÓ3ˆ
+Ü!Ÿ,™,×*Ñ*Ğ+<¸bÓAˆÜ—\‘\×%Ñ% l°BÓ7×=Ñ=Ó?×EÑEÓGˆ
+Ü—<‘<×#Ñ# J°Ó7ˆÜ—l‘l×&Ñ& }°dÄĞ&ÓGˆ
+Ü—\‘\×%Ñ% l°D¼uĞ%ÓEˆ
+Ü"Ÿ<™<×+Ñ+Ğ,>ÀÌ5Ğ+ÓQĞÜ—l‘l×&Ñ& }°a¼eĞ&ÓDˆ
+Ü—,‘,×"Ñ" 9¨bÓ1ˆ Ü|‰|×Ñ ¨Ó+×1Ñ1Ó3ˆä%Ÿl™l×.Ñ.Ğ/DÀdÓKĞØ
+œ7Ÿ=™=Õ
+(Ü—=‘= Õ.ˆDßˆt˜Ÿ
+Ÿ
+™
+¬,°t·}±}×*EÒ*Eß&Ü!Ÿw™wŸ|™|¬MĞ;NÓOHÜ—w‘w—~‘~ h×/Ò/ÜŸ	š	 (Ô+Ø—m‘m×*Ñ*¨3°Ó2°1Õ5×;Ñ;Ó=Ü)-¯ª«×)9Ñ)9Ğ(:¸!¸C¸5Ğ&AĞ#Ø—	‘	œ"Ÿ'™'Ÿ,™,¤}Ğ6IÓJÔKà‰ğ  ğ ¨:ÀØ¨KÀ$Ø!ğ-ô		.ğ 	
+
+‰
+Œ
+Ø
+‰
+Œä
+Ğ-¨yÔ9Üœ  
+°zÔBÓCĞCàL‰LĞ<¸x¸kÓJ×SÑSÓU€Eà|‰|ĞdÓe×nÑnÓp€HØ‡JJ„LÜ‹u€HÛˆØv•;×$Ñ$ SÖ)ˆCØ—)‘)“+ˆCß‰sØ—‘˜SÖ!ó  *ñ ÷ Ü
+Ğ*¨GÔ4Üœ   Ó(Ó)Ğ)ä
+Ğ,°EÄFÈ8ÓDTĞ[fÔ
+gĞgr"   z/usun/<int:trade_id>c                 óV  € \        4       pVP                  RV 34      P                  4       pV'       d£   VR,          '       dg   \        P                  P
+                  \        VR,          4      p\        P                  P                  V4      '       d   \        P                  ! V4       VP                  RV 34       VP                  4        VR,          pM#\        P                  ! 4       P                  4       pVP                  4        \        RR4       \        \!        R VR7      4      # )	z
+Usun trade.z6SELECT trade_date, screenshot FROM trades WHERE id = ?rm   zDELETE FROM trades WHERE id = ?r[   u   Trade zostaÅ‚ usuniÄ™ty.Úinfor^   ro   )r!   r   r]   r+   r-   r€   r   r   r‘   r1   r   rN   rw   r2   r
+   r   r	   )r’   r   r   Úscreenshot_pathr[   s   &    r    Údelete_trader˜     sÍ   € ô ‹8€DØL‰LĞQĞT\ĞS^Ó_×hÑhÓj€Eç Ø
+×
+Ô
+Ü Ÿg™gŸl™l¬=¸%ÀÕ:MÓNˆOÜw‰w~‰~˜o×.Ò.Ü—	’	˜/Ô*Ø‰Ğ6¸¸
+ÔDØ
+‰
+Œ
+Ø˜<Õ(‰
+ä—Z’Z“\×+Ñ+Ó-ˆ
+à‡JJ„LÜ	Ğ
+$ fÔ-Ü
+”G˜J°:Ô>Ó
+?Ğ?r"   z/uploads/<filename>c                ó"   € \        \        V 4      # )zSerwuj uploadowane pliki.)r   r   r=   s   &r    Ú
+uploaded_filerš   .  s   € ô œ}¨hÓ
+7Ğ7r"   z/api/dashboardc                 óp   € \        4       p \        P                  ! 4       pV P                   RVP	                  4       34      P
+                  4       pV\
+        VP                  4       R7      ,
+          pV P                   RVP	                  4       34      P
+                  4       pVP                  ^R7      pV P                   RVP	                  4       34      P
+                  4       pV P                   R4      P
+                  4       p V P                   R4      P                  4       p^ p	R p
+V'       dh   V^ ,          R,          p
+V
+^ 8”  d&   R	p
+V F  pVR,          ^ 8”  d   V	^,
+          p	K   M.	  M+V
+^ 8  d%   R
+p
+V F  pVR,          ^ 8  d   V	^,
+          p	K   M	  V P                   R
+4      P
+                  4       p
+V P                   R4      P
+                  4       pV P                   R
+4      P                  4       pV\
+        ^R7      ,
+          pV P                   RVP	                  4       34      P                  4       p. p^ pV FL  pVVR,          ,
+          pVP                  RVR,          R\        VR,          ^4      R\        V^4      /4       KN  	  V P                  4        V R,          '       d)   \        V R,          V R,          ,
+          ^d,          ^4      M^ p\        RRVR,          R\        VR,          ^4      /RRVR,          R\        VR,          ^4      /RRVR,          R\        VR,          ^4      /RRV R,          R\        V R,          ^4      RV R,          RV R,          RV/RRV	RV
+/RV
+'       d   \        V
+4      MRR V'       d   \        V4      MRR!V Uu. uF  p\        V4      NK  	  upR"V/	4      # u upi )#zAPI - dane dashboardu.zr
+        SELECT COUNT(*) as cnt, COALESCE(SUM(profit_loss), 0) as pl
+        FROM trades WHERE trade_date = ?
+    ©Údayszs
+        SELECT COUNT(*) as cnt, COALESCE(SUM(profit_loss), 0) as pl
+        FROM trades WHERE trade_date >= ?
+    )Údaya
+  
+        SELECT COUNT(*) as cnt, COALESCE(SUM(profit_loss), 0) as pl,
+               COALESCE(SUM(CASE WHEN profit_loss > 0 THEN 1 ELSE 0 END), 0) as wins,
+               COALESCE(SUM(CASE WHEN profit_loss < 0 THEN 1 ELSE 0 END), 0) as losses
+        FROM trades
+    zd
+        SELECT profit_loss FROM trades ORDER BY trade_date DESC, godzina_wejscia DESC LIMIT 50
+    Únonerk   ÚwinÚlossz6SELECT * FROM trades ORDER BY profit_loss DESC LIMIT 1z5SELECT * FROM trades ORDER BY profit_loss ASC LIMIT 1zY
+        SELECT * FROM trades ORDER BY trade_date DESC, godzina_wejscia DESC LIMIT 5
+    z‘
+        SELECT trade_date, SUM(profit_loss) as pl
+        FROM trades WHERE trade_date >= ?
+        GROUP BY trade_date ORDER BY trade_date
+    Úplr   r[   Ú
+cumulativeÚcntÚwinsrN   ÚcountÚweekrL   ÚtotalÚlossesÚ winrateÚstreakrK   ÚbestNÚworstÚ
+recent_tradesÚequity_curve)r!   r   rN   r   rw   r]   r   Ú weekdayÚ replacer0   ÚappendÚroundr2   r
+   Údict)r   rN   Útoday_tradesÚ
+week_startÚ
+week_tradesÚ
+month_startÚmonth_tradesr¨   Úrecentr«   Ú
+streak_typeÚfirst_plr3   r¬   r­   r®   Úthirty_days_agoÚdaily_plr£   Ú
+running_totalr‰   rª   Úts                          r    Ú
+api_dashboardrÁ   8  s¡  € ô ‹8€DÜJŠJ‹L€Eğ —<‘<ğ !ğ 
+/‰/Ó
+Ğ	ó ÷  (™x›zğ  ğ œ¨¯
+©
+«Ô8Õ8€JØ—,‘,ğ  ğ 
+×
+Ñ
+Ó
+ Ğ	"ó $÷ %-¡H£Jğ  ğ —-‘- A-Ó&€KØ—<‘<ğ !ğ 
+×
+Ñ
+Ó
+!Ğ	#ó %÷ &.¡X£Zğ  ğ 
+L‰Lğ ó 
+	÷
+ 
+‰‹ğ
+ 
+ğ \‰\ğ ó 	ç	‰‹ğ 
+ğ €FØ€Kß 
+Ø˜!•9˜]Õ+ˆØ
+aŒ<ØˆKÛØ]Õ# aÔ'Ø˜a•K’Fáò	 ğ
+ ˜Œ\Ø ˆKÛØ]Õ# aÔ'Ø˜a•K’Fáñ	 ğ <‰<ĞPÓ
+Q×
+ZÑ
+ZÓ
+\€DØL‰LĞPÓQ×ZÑZÓ\€Eğ —L‘Lğ "ó 	ç	‰‹ğ ğ
+ œi¨RÔ0Õ0€OØ|‰|ğ ğ 
+×
+#Ñ
+#Ó
+%Ğ	'ó	)÷ *2©«ğ	 
+ğ €JØ€MÛˆØ˜˜TÕ"ˆ
+Ø×Ñ˜6 3 |Õ#4°d¼EÀ#ÀdÅ)ÈQÓ<OĞQ]Ô_dĞerĞtuÓ_vĞwÖxñ ğ 	‡JJ„Là>CÀE¿l¼lŒeE˜&•M E¨%¥LÕ0°3Õ6¸Ô:ĞPQ€Gä
+Ø'˜<¨Õ.°´e¸LÈÕ<NĞPQÓ6RĞSØ˜+ eÕ,¨d´E¸+ÀdÕ:KÈQÓ4OĞPØ'˜<¨Õ.°´e¸LÈÕ<NĞPQÓ6RĞSØØU˜5•\Ø”%˜˜d
+ QÓ'ØE˜&•MØe˜H•oØwğ
+
+ğ 	7˜F F¨KĞ8ØŸd”T”
+¨Ø§”e”¨4Ø©=Ó9©= aœ$˜q'©=Ñ9Ø˜
+ğó  ğ  ùò :s   ÎN3&z$/api/calendar/<int:year>/<int:month>c                ó¼  € \        4       pVP                  R\        V 4      VR
+ 34      P                   4       pVP	                  4        / pV Fƒ  pRVR,          RVR,          '       d   \
+        VR,          ^4      M^ RVR,          '       d   \
+        VR,          ^4      M^ RVR,          '       d   \
+        VR,          ^4      M^ /WER ,          &   K…  	  \
+        V4      # )zAPI - dane kalendarza.aÄ  
+        SELECT
+            trade_date,
+            COUNT(*) as trade_count,
+            SUM(profit_loss) as total_pl,
+            SUM(CASE WHEN profit_loss > 0 THEN profit_loss ELSE 0 END) as total_profit,
+            SUM(CASE WHEN profit_loss < 0 THEN profit_loss ELSE 0 END) as total_loss
+        FROM trades
+        WHERE strftime('%Y', trade_date) = ? AND strftime('%m', trade_date) = ?
+        GROUP BY trade_date
+        ORDER BY trade_date
+    Ú02dÚ
+trade_countÚtotal_plÚtotal_profitÚ
+total_lossr[   ) r!   r   Ústrr0   r2   r³   r
+   )rI   rL   r   Úrowsr   r‰   s   &&    r    Úapi_calendarrÊ   ¡  sÑ   € ô ‹8€Dà
+<‰<ğ 
+ô 
+ˆd‹)˜˜c{Ğ	$ó
+&÷ '/¡h£jğ 	ğ 	‡JJ„Là
+
+€DÛˆà˜3˜}Õ-Ø°S¸·_´_œ˜c *o¨qÔ1È!Ø¸SÀ×=PÔ=PœE # nÕ"5°qÔ9ĞVWØ¸¸\×9JÔ9Jœ%  LÕ 1°1Ô5ĞPQğ	#
+ˆÕ
+Óñ ô 4‹=Ğr"   z!/api/stats/<int:year>/<int:month>c                ó  € \        4       pVP                  R\        V 4      VR
+ 34      P                   4       pVP	                  4        VR,          ;'       g    ^ pVR,          ;'       g    ^ p\
+        RTR\
+        VR,          ^4      RTRVR,          ;'       g    ^ R \
+        VR ,          ^4      R\
+        VR,          ^4      R	\
+        VR	,          ^4      R
+V^ 8”  d   \
+        WT,
+          ^d,          ^4      /4      # ^ /4      # )
+zAPI - statystyki miesiaca.aŠ  
+        SELECT
+            COUNT(*) as total_trades,
+            COALESCE(SUM(profit_loss), 0) as total_pl,
+            COALESCE(SUM(CASE WHEN profit_loss > 0 THEN 1 ELSE 0 END), 0) as winning_trades,
+            COALESCE(SUM(CASE WHEN profit_loss < 0 THEN 1 ELSE 0 END), 0) as losing_trades,
+            COALESCE(SUM(CASE WHEN profit_loss > 0 THEN profit_loss ELSE 0 END), 0) as total_profit,
+            COALESCE(SUM(CASE WHEN profit_loss < 0 THEN profit_loss ELSE 0 END), 0) as total_loss,
+            COALESCE(AVG(profit_loss), 0) as avg_pl
+        FROM trades
+        WHERE strftime('%Y', trade_date) = ? AND strftime('%m', trade_date) = ?
+    rÃ   Útotal_tradesÚwinning_tradesrÅ   Ú
+losing_tradesrÆ   rÇ   Úavg_plrª   ) r!   r   rÈ   r]   r2   r
+   r³   )rI   rL   r   r‰   r¨   r¥   s   &&    r    Úapi_month_statsrĞ   Á  s
+  € ô ‹8€Dà
+,‰,ğ 
+ô 
+ˆd‹)˜˜c{Ğ	$ó
+
+&÷ '/¡h£jğ ğ 	‡JJ„LàÕ×$Ğ$ 1€EØ
+ĞÕ
+ ×
+%Ğ
+% A€Dä
+Ø˜Ø”E˜#˜j/¨1Ó-Ø˜$Ø˜˜_Õ-×2Ğ2°Øœ˜c .Õ1°1Ó5Ø”e˜C Õ-¨qÓ1Ø”%˜˜H
+ qÓ)Ø°5¸1´9”5˜¨Õ+¨QÓ/ğ	ó 	 ğ 	 ğ CDğ	ó 	 ğ 	 r"   z/api/statisticsc                 óZ  € \        4       p V P                  R4      P                  4       pV P                  R4      P                   4       pV P                  R4      P                   4       p. R0OpV P                  R4      P                   4       pV P                  R4      P                   4       pV P                  R4      P                   4       p V P                  R 4      P                   4       p/ p	V F´  p
+V
+R,          P	                  R	4       F•  p
+V
+P
+                  4       p
+V
+'       g   K  W¹9  d
+   R
+^ R
+^ R^ /W›&   W›,          R
+;;,          ^,
+          uu&   W›,          R
+;;,          V
+R
+,          ,
+          uu&   V
+R
+,          ^ 8”  g   Kz  W›,          R;;,          ^,
+          uu&   K—  	  K¶  	  V P                  R4      P                   4       p. p
+^ pV F8  p
+WêR
+,          ,
+          pV
+P
+                  RV
+R,          R\        V^4      /4       K:  	  V P                  4        VR
+,          ;'       g    ^pVR,          ;'       g    ^ pV'       d   \        VR,          V,          4      M^ pVR,          '       d!   \        VR,          VR,          ,          4      M^pV^ 8”  d   \        VV,
+          ^4      M^ p\        RRVR
+,          R
+\        VR,          ^4      R\        VR,          ^4      R\        VR,          ^4      R\        VR,          ^4      RTRVR,          RVR,          RVR
+,          ^ 8”  d   \        VV,
+          ^d,          ^4      M^ R\        VR,          ^4      R\        VR,          ^4      RV/R V Uu. uFc  pR!VR",          RVR
+,          R
+\        VR
+,          ^4      RVR
+,          '       d)   \        VR,          VR
+,          ,
+          ^d,          ^4      M^ /NKe  	  upR#V Uu. uFj  pR!VVR$,          ,          RVR
+,          R
+\        VR
+,          ^4      RVR
+,          '       d)   \        VR,          VR
+,          ,
+          ^d,          ^4      M^ /NKl  	  upR%V Uu. uFc  pR&VR&,          RVR
+,          R
+\        VR
+,          ^4      RVR
+,          '       d)   \        VR,          VR
+,          ,
+          ^d,          ^4      M^ /NKe  	  upR'V Uu. uFc  pR!VR(,          RVR
+,          R
+\        VR
+,          ^4      RVR
+,          '       d)   \        VR,          VR
+,          ,
+          ^d,          ^4      M^ /NKe  	  upR)\        \        V 4      4       Uu. uF*  pR*VR*,          RVR
+,          R
+\        VR
+,          ^4      /NK,  	  upR+\        V	P                  4       R, R-R.7       UUu. uF_  w  ppR!TRVR
+,          R
+\        VR
+,          ^4      RVR
+,          '       d)   \        VR,          VR
+,          ,
+          ^d,          ^4      M^ /NKa  	  uppR/V
+/4      # u upi u upi u upi u upi u upi u uppi )1zAPI - pelne statystyki.aÖ  
+        SELECT
+            COUNT(*) as cnt,
+            COALESCE(SUM(profit_loss), 0) as total_pl,
+            COALESCE(AVG(profit_loss), 0) as avg_pl,
+            COALESCE(MAX(profit_loss), 0) as best_trade,
+            COALESCE(MIN(profit_loss), 0) as worst_trade,
+            COALESCE(SUM(CASE WHEN profit_loss > 0 THEN 1 ELSE 0 END), 0) as wins,
+            COALESCE(SUM(CASE WHEN profit_loss < 0 THEN 1 ELSE 0 END), 0) as losses,
+            COALESCE(SUM(CASE WHEN profit_loss = 0 THEN 1 ELSE 0 END), 0) as breakeven,
+            COALESCE(AVG(CASE WHEN profit_loss > 0 THEN profit_loss END), 0) as avg_win,
+            COALESCE(AVG(CASE WHEN profit_loss < 0 THEN profit_loss END), 0) as avg_loss
+        FROM trades
+    aO  
+        SELECT
+            instrument,
+            COUNT(*) as cnt,
+            COALESCE(SUM(profit_loss), 0) as pl,
+            COALESCE(SUM(CASE WHEN profit_loss > 0 THEN 1 ELSE 0 END), 0) as wins
+        FROM trades
+        WHERE instrument IS NOT NULL AND instrument != ''
+        GROUP BY instrument
+        ORDER BY pl DESC
+    a2  
+        SELECT
+            CAST(strftime('%w', trade_date) AS INTEGER) as dow,
+            COUNT(*) as cnt,
+            COALESCE(SUM(profit_loss), 0) as pl,
+            COALESCE(SUM(CASE WHEN profit_loss > 0 THEN 1 ELSE 0 END), 0) as wins
+        FROM trades
+        GROUP BY dow
+        ORDER BY dow
+    ak  
+        SELECT
+            SUBSTR(godzina_wejscia, 1, 2) as hour,
+            COUNT(*) as cnt,
+            COALESCE(SUM(profit_loss), 0) as pl,
+            COALESCE(SUM(CASE WHEN profit_loss > 0 THEN 1 ELSE 0 END), 0) as wins
+        FROM trades
+        WHERE godzina_wejscia IS NOT NULL AND godzina_wejscia != ''
+        GROUP BY hour
+        ORDER BY hour
+    zø
+        SELECT
+            kierunek,
+            COUNT(*) as cnt,
+            COALESCE(SUM(profit_loss), 0) as pl,
+            COALESCE(SUM(CASE WHEN profit_loss > 0 THEN 1 ELSE 0 END), 0) as wins
+        FROM trades
+        GROUP BY kierunek
+    zí
+        SELECT
+            strftime('%Y-%m', trade_date) as month,
+            COUNT(*) as cnt,
+            COALESCE(SUM(profit_loss), 0) as pl
+        FROM trades
+        GROUP BY month
+        ORDER BY month DESC
+        LIMIT 12
+    zJSELECT tagi, profit_loss FROM trades WHERE tagi IS NOT NULL AND tagi != ''r'   rq   r¤   r¢   r¥   rk   zs
+        SELECT trade_date, SUM(profit_loss) as pl
+        FROM trades GROUP BY trade_date ORDER BY trade_date
+    r   r[   ÚvalueÚ avg_winr©   Úavg_lossr¨   r¦   rÅ   rÏ   r¬   Ú
+best_trader­   Ú
+worst_tradeÚ	breakevenrª   Ú
+profit_factorÚ
+by_instrumentr%   re   Úby_dayÚdowÚ by_hourÚhourÚby_directionrf   Ú
+monthly_plrL   Ú by_tagsc                 ó"   € V ^,          R,          # )é   r¢   rF   )Úxs   &r    Ú<lambda>Ú api_statistics.<locals>.<lambda>p  s%   € ğ  ABğ  CDõ  AEğ  FJö  AKr"   T)ÚkeyÚ reverser¯   ) Ú	Niedzielau
+   PoniedziaÅ‚ekÚWtoreku   ÅšrodaÚCzwarteku    PiÄ…tekÚSobota)r!   r   r]   r0   r‚   ry   r²   r³   r2   Úabsr
+   ÚreversedÚlistr„   Úitems)r   r¨   rÙ   rÚ   Ú	day_namesrÜ   rŞ   rß   rˆ   Ú	tag_statsr‰   rŠ   r¾   ÚequityÚ runningr¤   r¥   Úgross_profitÚ
+gross_lossrØ   r3   ÚkÚvs                          r    Úapi_statisticsrø   ä  sC   € ô ‹8€Dğ 
+L‰Lğ 
+ó 
+
+	÷ 
+‰‹ğ 
+ğ  —L‘Lğ 
+"ó 
+	÷ 
+‰‹ğ ğ \‰\ğ 	ó 		÷ 
+‰‹ğ 
+ò d€Iğ l‰lğ 
+ó 
+	÷ 
+‰‹ğ ğ —<‘<ğ !ó 	÷ 
+‰‹ğ ğ —‘ğ 	ó 		÷ 
+‰‹ğ ğ |‰|ĞhÓi×rÑrÓt€HØ€IÛˆØv•;×$Ñ$ SÖ)ˆCØ—)‘)“+ˆCß‰sØÔ'Ø&+¨Q°°a¸ÀĞ%CI‘NØ•˜u×%¨Õ*Ó%Ø•˜t×$¨¨MÕ(:Õ:Ó$Ø}Õ%¨Ö)Ø•N 6×*¨aÕ/Õ*ó *ñ ğ |‰|ğ ó 	÷ 
+‰‹ğ  
+ğ
+ €FØ€GÛˆØt•9Õˆ Ø
+‰
+v˜s <Õ0°'¼5ÀÈ!Ó;LĞMÖNñ ğ 	‡JJ„Là
+,×
+Ğ
+˜!€CØ
+=×
+Ğ
+˜A€D÷ 48”3u˜YÕ'¨$Õ.Ô/¸Q€LØ=BÀ8¿_¼_”U˜:Õ&¨¨x­Õ8Ô9ĞRS€JØ;EÈ¼>”E˜,¨Õ3°QÔ7Èq€Mä
+ØØU˜5•\Ø”%˜˜jÕ)¨1Ó-Ø”e˜E (O¨QÓ/Ø”E˜% Õ-¨qÓ1Ø”U˜5 Õ/°Ó3ØDØe˜H•oØ˜˜{Õ+Ø°U¸5µ\ÀAÔ5E”u˜T CZ¨#Õ-¨qÔ1È1Ø”u˜U 9Õ-¨qÓ1Øœ˜e JÕ/°Ó3Ø˜]ğ
+
+ğ 	ñ  jwó  xñ  jwğ  ef˜6 1 \¥?°G¸Q¸u½XÀtÌUĞSTĞUYÕSZĞ\]ÓM^Ğ`iğ  PQğ  RW÷  PXô  PXÔkpĞqrĞsyÕqzĞ{|ğ  ~Cõ  |Dõ  rDğ  EHõ  rHğ  JKô  lLğ  ^_ó  `ñ  jwñ  xØñ  gmó  nñ  gmğ  bcF˜I a¨¥hÕ/°¸!¸E½(ÀDÌ%ĞPQĞRVÕPWĞYZÓJ[Ğ]fğ  MNğ  OT÷  MUô  MUÔhmĞnoĞpvÕnwĞxyĞzõ  yAõ  oAğ  BEõ  oEğ  GHô  iIğ  [\ó  ]ñ  gmñ  nØñ  ^eó  fñ  ^eğ  YZV˜Q˜vY¨ °°5µ¸4ÄÀqÈÅwĞPQÓARĞT]ğ  DEğ  FK÷  DLô  DLÔ_dĞefĞgmÕenĞopĞqvÕowÕewĞx{Õe{Ğ}~Ô_ğ  RSó  Tñ  ^eñ  fØñ  gsó  tñ  gsğ  bc˜& ! J¥-°¸!¸E½(ÀDÌ%ĞPQĞRVÕPWĞYZÓJ[Ğ]fğ  MNğ  OT÷  MUô  MUÔhmĞnoĞpvÕnwĞxyĞzõ  yAõ  oAğ  BEõ  oEğ  GHô  iIğ  [\ó  ]ñ  gsñ  tØÔbjÔkoĞpzÓk{Ôb|Ó}Ñb|Ğ]^˜   7¥¨W°a¸µhÀÄeÈAÈdÍGĞUVÓFWÓXÑb|Ñ}Øô  Y_ğ  `i÷  `oñ  `oó  `qñ  wKğ  UYõ  YZô  [ñ  YZñ  QUğ  QRğ  TUV˜Q  ¨¨5­°4¼¸qÀ½wÈÓ9JÈIĞ{|ğ  ~C÷  |Dô  |DÔW\Ğ]^Ğ_eÕ]fĞghĞinÕgoÕ]oĞpsÕ]sĞuvÔWwğ  JKó  Lñ  YZò  [Ø˜ğ+ó  ğ  ùò xùò nùò fùò tùÚ}ùó [s)   Í2A)XÏ"A0XÑA)XÓ	A)XÕ
+0X"ÖA%X'$z
+/api/tradesc                 ó 	  € \        4       p \        P                  P                   RR4      P	                  4       p\        P                  P                   RR4      P	                  4       p\        P                  P                   RR4      P	                  4       p\        P                  P                   RR4      P	                  4       p\        P                  P                   RR4      P	                  4       p\        P                  P                   R R4      p\        P                  P                   R	R
+4      p \        P                  P                   R
+^\
+        R7      p\        P                  P                   R
+^\
+        R7      p	0 R$mp
+Wj9  d   RpV R%9  d   R
+p Rp
+Rp. p
+. pV'       d=   V
+R,
+          p
+VR,
+          pV
+P
+                  RV R24       VP
+                  RV R24       V'       d5   V
+R,
+          p
+VR,
+          pV
+P
+                  V4       VP
+                  V4       V'       d=   V
+R,
+          p
+VR,
+          pV
+P
+                  RV R24       VP
+                  RV R24       V'       d5   V
+R,
+          p
+VR,
+          pV
+P
+                  V4       VP
+                  V4       V'       d5   V
+R,
+          p
+VR,
+          pV
+P
+                  V4       VP
+                  V4       V P                  WÎ4      P                  4       R,          pV	^ 8”  d   \        P                  ! Wù,
+          4      M^pV
+RV RV  R2,
+          p
+V
+R,
+          p
+V
+P                  W˜^,
+          V	,          .4       V P                  W½4      P                  4       pV P                  R4      P                  4       pV P                  R4      P                  4       p\        4       pV FM  pVR,          P                  R4       F.  pVP	                  4       pV'       g   K  VP                  V4       K0  	  KO  	  V P!                  4        \#        RV Uu. uF  p\%        V4      NK  	  upR TR
+TR
+T	R!TR"V Uu. uF  pVR,          NK  	  upR#\'        V4      / 4      # u upi u upi )&z"API - lista tradow z filtrowaniem.re   rd   rf   rŠ   Ú	date_fromÚ date_toÚsortr[   ÚdirÚDESCrD   rJ   Úper_pagezSELECT * FROM trades WHERE 1=1z,SELECT COUNT(*) as cnt FROM trades WHERE 1=1z AND instrument LIKE ?Ú%z AND kierunek = ?z AND tagi LIKE ?z AND trade_date >= ?z AND trade_date <= ?r¤   z
+ ORDER BY r&   z, godzina_wejscia DESCz LIMIT ? OFFSET ?zlSELECT DISTINCT instrument FROM trades WHERE instrument IS NOT NULL AND instrument != '' ORDER BY instrumentzFSELECT DISTINCT tagi FROM trades WHERE tagi IS NOT NULL AND tagi != ''r'   rq   rZ   r¨   Ú
+total_pagesÚ
+instrumentsÚtags>   Ú
+created_atri   re   r[   rh   rk   )ÚASCrş   )r!   r    rO   rP   ry   rQ   r²   r   r]   ÚmathÚceilÚextendr0   r   r‚   rƒ   r2   r
+   r´   r„   )r   re   rf   rŠ   rú   rû   Ú sort_byÚsort_dirrD   rÿ   Ú
+valid_sortsÚqueryÚ
+count_queryÚparamsÚcount_paramsÚ
+total_countr  rZ   r  rˆ   rt   r‰   rÀ   r3   s                           r    Ú
+api_tradesr  u  sá  € ô ‹8€Dä—‘×!Ñ! ,°Ó3×9Ñ9Ó;€JÜ|‰|×Ñ 
+¨BÓ/×5Ñ5Ó7€HÜ
+,‰,×
+Ñ
+˜5 "Ó
+%×
++Ñ
++Ó
+-€CÜ—‘× Ñ  ¨bÓ1×7Ñ7Ó9€IÜl‰l×Ñ˜y¨"Ó-×3Ñ3Ó5€GÜl‰l×Ñ˜v |Ó4€GÜ|‰|×Ñ  vÓ.€HÜ
+<‰<×
+Ñ
+˜F A¬CĞ
+Ó
+0€DÜ|‰|×Ñ 
+¨B´SĞÓ9€Hò i€KØ Ô !Øˆ Ø Ô &Øˆà,€EØ@€KØ
+€FØ€Lç Ø
+Ğ)Õ)ˆØĞ/Õ/ˆ
+Ø
+‰
+˜˜*˜ QĞ'Ô(Ø×Ñ˜a 
+˜|¨1Ğ-Ô.ç Ø
+Ğ$Õ$ˆØĞ*Õ*ˆ
+Ø
+‰
+hÔØ×Ñ˜HÔ%ç 
+Ø
+Ğ#Õ#ˆØĞ)Õ)ˆ
+Ø
+‰
+˜˜#˜˜ajÔ!Ø×Ñ˜a ˜u A˜JÔ'ç Ø
+Ğ'Õ'ˆØĞ-Õ-ˆ
+Ø
+‰
+iÔ Ø×Ñ˜IÔ&ç Ø
+Ğ'Õ'ˆØĞ-Õ-ˆ
+Ø
+‰
+gÔØ×Ñ˜GÔ$à—,‘,˜{Ó9×BÑBÓDÀUÕK€KØ7?À!´|”$—)’)˜KÕ2Ô3È€Kà	ˆz˜'˜ ! H :Ğ-CĞ
+DÕD€EØ	Ğ
+ Õ €EØ
+‡MM8 Qh¨(Õ2Ğ3Ô4à
+\‰\˜%Ó
+(×
+1Ñ
+1Ó
+3€Fğ —,‘,ğ   Nó  O÷  Xñ  Xó  Z€KØ|‰|ĞdÓe×nÑnÓp€HÜ‹u€HÛˆØV•×"Ñ" 3Ö'ˆAØ— ‘ “	ˆAß‰qØ—‘˜Q–ó  (ñ ğ 	‡JJ„Lä
+Ø¡FÓ+¡F˜q”4˜–7¡FÑ+ØØØHØ{Ø±Ó=±¨A˜˜,Ÿ˜±Ñ=Ø”xÓ ğó  ğ  ùÚ+ùò
+ >s   Ğ.Q6
+ÑQ;z/api/export/csvc                 óD  € \        4       p V P                  R4      P                  4       pV P                   4        \        P
+                  ! 4       p\        P                  ! V4      pVP                  . RO4       V Fd  pVP                  VR,          VR,          VR,          VR,          VR,          VR ,          VR,          VR	,          VR
+,          VR
+,          .
+4       Kf  	  \        RVP                  4       ,           4      pR
+VP                  R&   RVP                  R&   V# )zEksport tradow do CSV.zCSELECT * FROM trades ORDER BY trade_date DESC, godzina_wejscia DESCr[   rc   re   rf   rh   ri   rj   rk   r'   rl   u   ï»¿z,attachment; filename=journal_trade_export.csvzContent-Dispositionztext/csv; charset=utf-8zContent-Type)
+ÚDataÚ GodzinaÚ
+InstrumentÚKierunekz
+Entry Pricez
+Exit PricezWielkosc pozycjiz
+Zysk/StrataÚTagiÚ Notatki)r!   r   r0   r2   ÚioÚStringIOÚcsvÚwriterÚwriterowr   ÚgetvalueÚ headers)r   rZ   Úoutputr  rÀ   Úresponses         r    Ú
+export_csvr"  Î  sø   € ô ‹8€DØ
+\‰\Ğ_Ó
+`×
+iÑ
+iÓ
+k€FØ‡JJ„Lä
+[Š[‹]€FÜ
+ZŠZ˜Ó
+€FØ
+‡OOò Lô Mó ˆØ‰Ø
+ˆlO˜QĞ0Õ1°1°\µ?ÀAÀjÅMØ
+ˆmÕ˜a o¨qĞ1CÕ/DØ
+ˆmÕ˜a i¨¨9­ğ 
+ö 	
+ñ ô ˜X¨¯©Ó(9Õ9Ó:€HØ.\€H×ÑĞ*Ñ+Ø'@€H×Ñ^Ñ$Ø
+€Or"   Úmt5_passwordÚbinance_secretc                  óÒ   € \        4       p V P                  R 4      P                  4       pV P                   4        V Uu/ uF  q"R,          VR,          ;'       g    RbK  	  up# u upi )zSELECT key, value FROM settingsræ   rÒ   rd   )r!   r   r0   r2   )r   rÉ   r3   s      r    Úget_settingsr&  ô  sU   € Ü
+‹8€DØ
+<‰<Ğ9Ó
+:×
+CÑ
+CÓ
+E€DØ‡JJ„LÙ04Ó
+5±¨1ˆeHa˜ •j×&Ğ& BÒ&±Ñ
+5Ğ5ùÒ
+5s
+   ¾A$Á A$c                 óÆ   € \        4       pV P                  4        F"  w  r#VP                  R V\         V4      34       K$  	  VP	                  4        VP
+                  4        R# )zcINSERT INTO settings(key, value) VALUES(?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.valueN)r!   rï   r   rÈ   r1   r2   )Úvaluesr   rö   r÷   s   &   r    Ú
+save_settingsr)  û  sP   € Ü
+‹8€DØ—‘–‰ˆØ‰ğ MØOPÔRUĞVWÓRXÈkö	[ñ ğ 	‡KK„MØ‡JJ†Lr"   c                óœ  € \        4       p^ pV  F‡  pVP                  RVR,          VR,          VR,          VR,          VR,          VR ,          VR,          VR	,          VR
+,          VR
+,          VR,          VR
+,          34      pW$P                  ,
+          pK‰  	  VP                   4        VP	                  4        V\
+        V 4      V,
+          3# )uM   Zapisz trady, pomijajÄ…c duplikaty (external_id). Zwraca (dodane, duplikaty).a  
+            INSERT OR IGNORE INTO trades
+            (trade_date, godzina_wejscia, instrument, kierunek, entry_price, exit_price,
+             wielkosc_pozycji, profit_loss, notatki, tagi, source, external_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        r[   rc   re   rf   rh   ri   rj   rk   rl   r'   r(   r)   )r!   r   Úrowcountr1   r2   Úlen)rZ   r   ÚaddedrÀ   Úcurs   &    r    Ú
+insert_tradesr/    s¼   € ä
+‹8€DØ
+€EÛ
+ˆØl‰lğ ğ
+ o˜qĞ!2Õ3°Q°|µ_ÀaÈ
+ÅmØ
+Õ  ,¥°Ğ3EÕ1FÈÈ-ÕHXØ	l˜A˜fI q¨¥{°A°mÕ4DğFó
+ Gˆğ 	—‘ÕŠñ ğ 	‡KK„MØ‡JJ„LØ
+”#f“+ Õ%Ğ
+%Ğ%r"   c                 ó„  € \         P                  RR7      '       g    RRRR/#  \        4       p V P                   RR 4      p \	        ^\
+        R\
+        V P                   R	4      ;'       g    ^4      4      4      p\        P                  ! 4       \        VR
+7      ,
+          p VR
+8X  d   \        P                  ! W4      pM8VR8X  d   \        P                  ! W4      pMRRRR
+/\         P                  4        # \        V4      w  rVRRRVRVRR\!        V4       RV RV R2 /p \'        R\        P                  ! 4       P)                  R4      RV R,          /4       V \         P                  4        #   \         d     ^p ELi ; i  \"         d   pRRR\%        T4      /p  Rp?LRp?ii ; i  \         P                  4        i ; i)u0   Wykonaj synchronizacjÄ™ wg zapisanych ustawieÅ„.F)ÚblockingÚokÚ messageu   Synchronizacja juÅ¼ trwa.Ú
+sync_providerrd   im  Ú	sync_daysrœ   Úmt5Ú binanceu%   Wybierz dostawcÄ™ API w ustawieniach.Tr-  Ú
+duplicateszPobrano z
+ transakcji: z	 nowych, u    juÅ¼ istniaÅ‚o.NÚ	last_syncú%Y-%m-%d %H:%M:%SÚlast_sync_result)Ú	sync_lockÚ acquirer&  rP   ÚmaxÚminrQ   Ú
+ValueErrorr   Únowr   Ú	importersÚsync_mt5Úsync_binanceÚ releaser/  r,  Ú	ExceptionrÈ   r)  Ústrftime)	ÚsÚproviderr   ÚsincerZ   r-  ÚdupesÚresultÚes	            r    Úrun_syncrN    s¡  € ä
+×
+Ñ
+ eĞ
+×
+,Ò
+,Øe˜YĞ(CĞDĞDğÜ‹NˆØ—5‘5˜¨"Ó-ˆğ	Üqœ#˜c¤3 q§u¡u¨[Ó'9×'?Ğ'?¸RÓ#@ÓAÓBˆDô —’“¤°Ô!5Õ5ˆğ
+	6Ø˜5Ô Ü"×+Ò+¨AÓ5‘Ø˜YÔ&Ü"×/Ò/°Ó9‘à˜e YĞ0WĞXô 	×ÑÕô )¨Ó0‰LˆEØ˜D '¨5°,ÀØ 8¬C°«K¨=¸
+ÀeÀWÈIĞV[ĞU\Ğ\lĞ!mğoˆFô 	{¤H§L¢L£N×$;Ñ$;Ğ<OÓ$PØ)¨6°)Õ+<ğ>ô 	?àä×ÑÕøô' ô 	Ø‹Dğ	ûô ô 	6Ø˜E 9¬c°!«fĞ5Fûğ	6ûô 	×ÑÕús`   ¤F) Á8E. Á9&F) Â AF Ã6*F Ä 9F) Å.
+E?Å;F) Å>E?Å?F) Æ
+F&Æ
+F!ÆF) Æ!F&Æ&F) Æ)F?c                 ó  € ^ RI p V P                  ^
+4         \        4       pVP                   R4      R8X  d³   VP                   R4      '       dœ   \	        ^\
+        VP                   R4      ;'       g    ^4      4      pVP                   R 4      pRpV'       dA   \        P                  ! VR4      p\        P                  ! 4       V,
+          \        VR	7      8¬  pV'       d
+   \        4        T P                  ^<4       Kç    \         d     L i ; i)
+u5   WÄ…tek w tle: automatyczna synchronizacja co N minut.NTÚ	auto_syncÚ1r4  Ú
+sync_intervalr9  r:  )Ú minutes)ÚtimeÚsleepr&  rP   r>  rQ   r   ÚstrptimerA  r   rN  rF  )Ú_trH  ÚintervalÚlastÚdueÚ last_dts         r    Úauto_sync_loopr\  6  sÌ   € ãØ‡HHˆR„LØ
+ğ	Ü“ˆAØu‰u[Ó! SÔ(¨Q¯U©U°?×-CÒ-CÜ˜q¤# a§e¡e¨OÓ&<×&BĞ&BÀÓ"CÓDØ—u‘u˜[Ó)ØßÜ&×/Ò/°Ğ6IÓJGÜ"Ÿ,š,›.¨7Õ2´iÈÔ6QÑQCßÜ”Jğ 	
+‰øô ô 	Ùğ	ús*   ˜6C= Á"C= Á2%C= ÂA C= Ã 
+C= Ã=
+D
+Ä
+D
+z /importc                 óD   € \        RR\        P                  ! 4       R7      # )z'Strona: metody wprowadzania transakcji.z
+import.htmlÚimport)rD   Ú
+mt5_available)r   rB  r_  rF   r"   r    Ú
+import_pager`  K  s   € ô ˜=¨xÄy×G^ÒG^ÓG`Ô
+aĞar"   z/api/import/filec                 ó6  € \         P                  P                  R4      p V '       d   V P                  '       g   \	        RRRR/4      R3# V P
+                  4       pV'       g   \	        RRRR /4      R3#  \        P                  ! V P                  V4      w  r#T'       g   \	        RRRR	/4      R3# \         P                  P                  R
+4      R
+8X  Ed   \        4       p\        4       pT U u. uF
+  qwR,          NK
+  	  pp \        ^ \        T4      R
+4       Fh  p	Y‰T	R
+,            p
+RRP                  R\        T
+4      ,          4       R2p
+TP!                  R TP#                  Yº4      P%                  4        4       4       Kj  	  TP'                  4        T F  p T R,          T9   T R&   K  	  \	        RRRTRTR\)        \+        R T 4       4      ^4      /4      # \         P                  P                  RR4      P-                  4       pT'       d.   T F'  p RP                  R T R,          T3 4       4      T R&   K)  	  \/        T4      w  rŞ\	        RRRT
+RTRTRR T
+ R!T R"2/4      #   \         d%   p\	        RRR\        T4      /4      R3u Rp?# Rp?ii ; iu up i )#u3   Import pliku CSV/HTML. preview=1 -> tylko podglÄ…d.r†   r2  Fr3  zNie wybrano pliku.i  zPlik jest pusty.Nu+   Nie znaleziono Å¼adnych transakcji w pliku.Ú previewrQ  r)   iô  z5SELECT external_id FROM trades WHERE external_id IN (rq   Ú?Ú)c              3   ó2   "  € T F
+  qR ,          x € K  	  R# 5i)r)   NrF   )Ú.0r3   s   & r    Ú	<genexpr>Ú"api_import_file.<locals>.<genexpr>i  s   é € ĞXÑ6W°˜m×,Ò,Ó6Wùó   ‚Ú	duplicateTrZ   Ú skippedrÅ   c              3   ó2   "  € T F
+  qR ,          x € K  	  R# 5i)rk   NrF   )rf  rÀ   s   & r    rg  rh  n  s   é € Ğ-OÉÀ1°
+×.>Ò.>Ëùri  rŠ   rd   z, c              3   ó8   "  € T F  q'       g   K  Vx € K  	  R # 5i©NrF   )rf  rã   s   & r    rg  rh  s  s   é € Ğ!IÑ-C¨Ãq§!¢!Ó-Cùs   ‚	
+r'   r-  r8  zZaimportowano z
+ transakcji (u    duplikatÃ³w pominiÄ™to).)r    r{   rP   r>   r
+   ÚreadrB  Ú
+parse_filerF  rÈ   rv   r!   r   Úranger,  r€   Úupdater   r0   r2   r³   Úsumry   r/  )r†   r   rZ   rk  rM  r   r4   rÀ   ÚidsÚiÚchunkÚqÚ	extra_tagr-  rK  s                  r    Úapi_import_filery  Q  sy  € ô =‰=×
+Ñ
+˜VÓ
+$€Dß
+t—}—}}Ü˜˜e YĞ0DĞEÓFÈĞKĞKØ
+9‰9‹;€Dß
+Ü˜˜e YĞ0BĞCÓDÀcĞIĞIğ>Ü#×.Ò.¨t¯}©}¸dÓC‰ˆ÷ Ü˜˜e YĞ0]Ğ^Ó_ĞadĞdĞdä ‡||× Ñ ˜	Ó " cÕ )Ü‹xˆÜ“5ˆÙ)/Ó0© A×Ğ©ˆĞ0Üqœ#˜c›( CÖ(ˆAØ˜!˜c'NˆEØGÈÏÉĞQTÔWZĞ[`ÓWaÕQaÓHbĞGcĞcdĞeˆAØO‰OÑX°d·l±lÀ1Ó6L×6UÑ6UÔ6WÓXÖXñ  )ğ 	
+
+‰
+ŒÛˆAØ˜}Õ-°Ñ9ˆAˆk‹Nñ ä˜˜d H¨f°iÀØ"¤E¬#Ñ-OÉÓ-OÓ*OĞQRÓ$SğUó Vğ 	Vô —‘× Ñ  ¨Ó+×1Ñ1Ó3€Iß ÛˆAØŸ	™	Ñ!I¨a°­i¸Ñ-CÓ!IÓIˆAˆf‹Iñ ä  Ó(L€EÜ
+D˜$  ¨°¸eÀYĞPWØ °¨w°mÀEÀ7ĞJcĞdğfó gğ gøô3 ô >Ü˜˜e Y´°A³Ğ7Ó8¸#Ğ=Õ=ûğ>üò 1s$   Á5#I$ Ã.JÉ$
+JÉ/JÊJÊJz/api/sync/settingsc                  óN  € \         P                  R 8X  d‘   \         P                  ! RR7      ;'       g    / p / p\         FI  pVR	9   g    W 9  d   K  \	        W,          4      P
+                  4       pV\        9   d
+   VR8X  d   KE  W1V&   KK  	  \        V4       \        RRRR/4      # \        4       p\         Uu/ uF  q"VP                  VR 4      bK  	  pp\         F   pVP                  V4      '       g   K  RWR&   K"  	  \        P                  ! 4       VR&   \        V4      # u upi )
+r`   T)Úforcez********r2  r3  zUstawienia zapisane.rd   r_  )r9  r;  )
+r    ru   Úget_jsonÚ	SYNC_KEYSrÈ   ry   Ú
+SECRET_KEYSr)  r
+   r&  rP   rB  r_  )Ú payloadr(  rö   r÷   rH  Úouts         r    Úapi_sync_settingsr  y  sú   € ä ‡~~˜Ô Ü×"Ò"¨Ô.×4Ğ4°"ˆ ØˆßˆAØĞ5Ô5¸Ô9IÙÜG•J“×%Ñ%Ó'ˆAØ”KÔ A¨¤OÙØ1‹Iñ
+ ô 	fÔÜ˜˜d IĞ/EĞFÓGĞGä‹€Aİ$-Ó
+.¡I˜qˆae‰eAr‹lŠ?¡I€CĞ
+.ß
+ˆØ
+7‰71:Œ:ØˆC‹Fñ ô %×2Ò2Ó4€CˆÑÜ
+3‹<Ğùò
+ 
+/s   Â8D"z
+/api/sync/runc                  ó(   € \        \        4       4      # rn  )r
+   rN  rF   r"   r    Úapi_sync_runrƒ  ‘  s   € ä
+”8“:Ó
+Ğr"   Ú__main__i³  zhttp://127.0.0.1:c                  ód   € ^ RI p V P                  R4       \        P                  ! \        4       R# )é    Ng      ø?)rT  rU  Ú
+webbrowserÚopenÚurl)rT  s    r    Úopen_browserrŠ  Ÿ  s   € ÛØ
+‰
+3ŒÜŠœÖr"   T)ÚtargetÚdaemonz*==========================================z+       JOURNAL TRADE - Trading Journal      z   Aplikacja: z   Zamknij: Ctrl+Cz	127.0.0.1)ÚhostÚportÚdebug>   ÚbmpÚgifÚjpgÚpngÚjpegÚwebpi   )r4  rP  rR  r5  Ú	mt5_loginr#  Ú
+mt5_serverÚmt5_pathÚ
+binance_keyr$  r9  r;  )PÚ __doc__r+   Úsysr   r|   r  r  r‡  Ú	threadingr  r   r   r   Úflaskr   r   r    r   r	   r
+   r
+   r   r
+   r   Ú getattrr-   r.   Ú
+executableÚBASE_DIRÚ abspathÚ__file__Ú__name__r€   ÚappÚ
+secret_keyr   r   r<   Úconfigr!   r7   r?   ÚrouterG   rM   rS   rV   rX   r^   r‹   r”   r˜   rš   rÁ   rÊ   rĞ   rø   r  r"  rB  r}  r~  ÚLockr<  r&  r)  r/  rN  r\  r`  ry  r  rƒ  r  r‰  rŠ  ÚThreadÚstartÚprintÚrunrF   r"   r    Ú<module>r­     s’  ğñó
+ 
+Û 
+Û Û 
+Û 
+Û 	Û Û Û 
+ß .Ñ .÷÷ ÷ ñ 
+ˆ3˜%× Ò Øw‰w‰˜sŸ~™~Ó.Hàw‰w‰˜rŸw™wŸ™¨xÓ8Ó9€Há
+ˆHØŸG™GŸL™L¨°;Ó?ØŸ'™'Ÿ,™, x°Ó:ô <€ğ 0€„à
+'‰',‰,x ¨Ó
+5€ Ø— ‘ —‘˜X x°Ó;€
+ÚAĞ à+€‡
+
+ˆ?Ñ Ø#3€‡
+
+Ğ
+Ñ  òò-ò`Dğ ‡ˆ3ƒñ?ó ğ?ğ
+ ‡ˆ<Óñdó ğdğ ‡ˆ=ÓñAó ğAğ
+ ‡ˆ;Óñ=ó ğ=ğ
+ ‡ˆ=ÓñAó ğAğ
+ ‡Ğ
+ Ó!ñ-ó "ğ-ğ. ‡ˆ8˜e V˜_€Ó-ñ2só .ğ2sğj ‡Ğ
+#¨e°V¨_€Ó=ñ;hó >ğ;hğ| ‡Ğ
+!¨F¨8€Ó4ñ@ó 5ğ@ğ* ‡Ğ
+ Ó!ñ8ó "ğ8ğ ‡Ğ
+Óñe ó ğe ğP ‡Ğ
+1Ó2ñó 3ğğ> ‡Ğ
+.Ó/ñ ó 0ğ ğD ‡Ğ
+ÓñM ó ğM ğ` ‡ˆ=ÓñU ó ğU ğp ‡Ğ
+Óñó ğó8 ò
+O€	ğ Ğ/Ğ0€
+ØNŠNÓ€	ò6òò&ò&ò>ğ* ‡ˆ9Óñbó ğbğ
+ ‡Ğ
+¨ x€Ó0ñ$gó 1ğ$gğN ‡Ğ
+¨%°¨€Ó9ñó :ğğ. ‡ˆ? V H€Ó-ñó .ğğ ˆzÔÙ
+„IØ
+€DØ˜d˜VĞ
+$€Còğ
+ ×Ò˜L°Ô6×<Ñ<Ô>Ø
+×Ò˜N°4Ô8×>Ñ>Ô@á	Ğ
+6Ô7Ù	Ğ
+7Ô8Ù	ˆN˜3˜%Ğ
+ Ô!Ù	Ğ
+ÔÙ	Ğ
+6Ô7à ‡GG 4¨u€GÖ5ñ' r"   

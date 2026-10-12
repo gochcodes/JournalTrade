@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% block title %}Statystyki{% endblock %}
+{% block header %}📊 Statystyki{% endblock %}
+{% block content %}
+
+<div class="stats-grid">
+    <div class="stat-card blue"><div class="stat-label">Wszystkie trade’y</div><div class="stat-value neutral" id="s-count">0</div></div>
+    <div class="stat-card gold"><div class="stat-label">Wynik całkowity</div><div class="stat-value neutral" id="s-pl">0,00</div></div>
+    <div class="stat-card green"><div class="stat-label">Winrate</div><div class="stat-value neutral" id="s-wr">0%</div></div>
+    <div class="stat-card blue"><div class="stat-label">Profit factor</div><div class="stat-value neutral" id="s-pf">0,00</div></div>
+    <div class="stat-card green"><div class="stat-label">Średni zysk</div><div class="stat-value positive" id="s-avgwin">0,00</div></div>
+    <div class="stat-card red"><div class="stat-label">Średnia strata</div><div class="stat-value negative" id="s-avgloss">0,00</div></div>
+</div>
+
+<div id="stats-empty" class="empty-state" style="display:none;">
+    <div class="empty-icon">📊</div>
+    <h3>Brak danych do analizy</h3>
+    <p>Dodaj lub zaimportuj transakcje, aby zobaczyć statystyki.</p>
+    <a href="{{ url_for('import_page') }}" class="btn btn-primary">🔄 Przejdź do importu</a>
+</div>
+
+<div id="stats-body">
+    <div class="grid-2-1">
+        <div class="card reveal">
+            <div class="card-title">Krzywa kapitału (equity)</div>
+            <div class="chart-container"><canvas id="c-equity"></canvas></div>
+        </div>
+        <div class="card reveal d2">
+            <div class="card-title">Wygrane / Przegrane</div>
+            <div class="chart-container"><canvas id="c-winloss"></canvas></div>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card reveal">
+            <div class="card-title">Wynik miesięczny</div>
+            <div class="chart-container"><canvas id="c-monthly"></canvas></div>
+        </div>
+        <div class="card reveal d2">
+            <div class="card-title">Wynik wg dnia tygodnia</div>
+            <div class="chart-container"><canvas id="c-dow"></canvas></div>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card reveal">
+            <div class="card-title">Wynik wg godziny wejścia</div>
+            <div class="chart-container"><canvas id="c-hour"></canvas></div>
+        </div>
+        <div class="card reveal d2">
+            <div class="card-title">Kluczowe wskaźniki</div>
+            <div class="kpi-list" id="kpi"></div>
+        </div>
+    </div>
+
+    <div class="grid-3">
+        <div class="card reveal">
+            <div class="card-title">Instrumenty</div>
+            <div id="t-instr"></div>
+        </div>
+        <div class="card reveal d2">
+            <div class="card-title">Kierunek (LONG / SHORT)</div>
+            <div id="t-dir"></div>
+        </div>
+        <div class="card reveal d3">
+            <div class="card-title">Tagi / strategie</div>
+            <div id="t-tags"></div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(async () => {
+    let s;
+    try { s = await fetch('/api/statistics').then(r => r.json()); }
+    catch (e) { JT.toast('Nie udało się wczytać statystyk', 'error'); return; }
+    const T = s.total;
+
+    JT.countUp(document.getElementById('s-count'), T.count, { decimals: 0 });
+    const plEl = document.getElementById('s-pl'); plEl.className = 'stat-value ' + JT.plClass(T.pl);
+    JT.countUp(plEl, T.pl, { prefixSign: true });
+    const wrEl = document.getElementById('s-wr'); wrEl.className = 'stat-value ' + (T.winrate >= 50 ? 'positive' : (T.count ? 'negative' : 'neutral'));
+    JT.countUp(wrEl, T.winrate, { decimals: 1, suffix: '%' });
+    const pfEl = document.getElementById('s-pf'); pfEl.className = 'stat-value ' + (T.profit_factor >= 1 ? 'positive' : (T.count ? 'negative' : 'neutral'));
+    JT.countUp(pfEl, T.profit_factor);
+    JT.countUp(document.getElementById('s-avgwin'), T.avg_win, { prefixSign: true });
+    JT.countUp(document.getElementById('s-avgloss'), T.avg_loss);
+
+    if (!T.count) {
+        document.getElementById('stats-body').style.display = 'none';
+        document.getElementById('stats-empty').style.display = 'block';
+        return;
+    }
+
+    const G = 'rgba(16, 185, 129, 1)', R = 'rgba(239, 68, 68, 1)', B = 'rgba(59, 130, 246, 1)';
+    const barColors = arr => arr.map(v => v >= 0 ? 'rgba(16,185,129,.75)' : 'rgba(239,68,68,.75)');
+    const plTooltip = { callbacks: { label: c => `P/L: ${JT.fmtPL(c.raw)}` } };
+    const baseOpts = {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: plTooltip },
+        scales: { x: { grid: { display: false } }, y: { ticks: { callback: v => JT.fmt(v, 0) } } },
+    };
+    const barChart = (id, labels, data) => new Chart(document.getElementById(id), {
+        type: 'bar',
+        data: { labels, datasets: [{ data, backgroundColor: barColors(data), borderRadius: 6, maxBarThickness: 42 }] },
+        options: { ...baseOpts, animation: { delay: c => c.dataIndex * 60 } },
+    });
+
+    // Equity
+    const ectx = document.getElementById('c-equity').getContext('2d');
+    const last = s.equity_curve.length ? s.equity_curve[s.equity_curve.length - 1].value : 0;
+    const ecol = last >= 0 ? G : R;
+    new Chart(ectx, {
+        type: 'line',
+        data: {
+            labels: s.equity_curve.map(p => JT.fmtDate(p.date)),
+            datasets: [{ data: s.equity_curve.map(p => p.value), borderColor: ecol,
+                backgroundColor: JT.gradient(ectx, ecol), fill: true, tension: .3,
+                pointRadius: s.equity_curve.length > 60 ? 0 : 3, borderWidth: 2.5 }]
+        },
+        options: { ...baseOpts, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => `Kapitał: ${JT.fmtPL(c.raw)}` } } },
+                   scales: { x: { grid: { display: false }, ticks: { maxTicksLimit: 10 } }, y: baseOpts.scales.y } },
+    });
+
+    // Win/Loss doughnut
+    new Chart(document.getElementById('c-winloss'), {
+        type: 'doughnut',
+        data: { labels: ['Wygrane', 'Przegrane', 'Break-even'],
+                datasets: [{ data: [T.wins, T.losses, T.breakeven], backgroundColor: [G, R, '#64748b'], borderWidth: 0, hoverOffset: 12 }] },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '68%',
+                   plugins: { legend: { position: 'bottom' } }, animation: { animateRotate: true, duration: 1400 } },
+    });
+
+    const monthName = m => { const [y, mm] = m.split('-'); return `${MONTHS_PL[+mm - 1].slice(0, 3)} ${y.slice(2)}`; };
+    barChart('c-monthly', s.monthly_pl.map(m => monthName(m.month)), s.monthly_pl.map(m => m.pl));
+
+    const order = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'];
+    const dows = [...s.by_day].sort((a, b) => order.indexOf(a.name) - order.indexOf(b.name));
+    barChart('c-dow', dows.map(d => d.name.slice(0, 3)), dows.map(d => d.pl));
+    barChart('c-hour', s.by_hour.map(h => `${h.hour}:00`), s.by_hour.map(h => h.pl));
+
+    // KPI
+    const rr = T.avg_loss ? Math.abs(T.avg_win / T.avg_loss) : 0;
+    const expectancy = (T.winrate / 100) * T.avg_win + (1 - T.winrate / 100) * T.avg_loss;
+    const kpis = [
+        ['🏆 Najlepszy trade', JT.fmtPL(T.best), JT.plClass(T.best)],
+        ['💀 Najgorszy trade', JT.fmtPL(T.worst), JT.plClass(T.worst)],
+        ['⚖️ Średni R:R (zysk / strata)', '1 : ' + JT.fmt(rr), rr >= 1 ? 'positive' : 'negative'],
+        ['🎯 Wartość oczekiwana / trade', JT.fmtPL(expectancy), JT.plClass(expectancy)],
+        ['📊 Średni P/L', JT.fmtPL(T.avg_pl), JT.plClass(T.avg_pl)],
+        ['➖ Break-even', T.breakeven, 'neutral'],
+    ];
+    document.getElementById('kpi').innerHTML = kpis.map(([l, v, c]) =>
+        `<div class="calc-result-row"><span class="calc-result-label">${l}</span><span class="calc-result-value ${c}">${v}</span></div>`).join('');
+
+    // Tabele
+    const table = (rows) => rows.length ? `
+        <table class="mini-table"><thead><tr><th>Nazwa</th><th>Ilość</th><th>Winrate</th><th style="text-align:right">P/L</th></tr></thead><tbody>
+        ${rows.map(r => `<tr><td><b>${JT.esc(r.name)}</b></td><td>${r.count}</td>
+            <td><div class="progress"><div data-w="${r.winrate}" style="background:${r.winrate >= 50 ? '#10b981' : '#ef4444'}"></div></div>
+                <span class="muted-text">${JT.fmt(r.winrate, 1)}%</span></td>
+            <td style="text-align:right" class="${JT.plClass(r.pl)}"><b>${JT.fmtPL(r.pl)}</b></td></tr>`).join('')}
+        </tbody></table>` : '<p class="muted-text">Brak danych.</p>';
+    document.getElementById('t-instr').innerHTML = table(s.by_instrument);
+    document.getElementById('t-dir').innerHTML = table(s.by_direction);
+    document.getElementById('t-tags').innerHTML = table(s.by_tags);
+    setTimeout(() => document.querySelectorAll('.progress > div').forEach(el => el.style.width = el.dataset.w + '%'), 300);
+})();
+</script>
+{% endblock %}
